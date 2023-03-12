@@ -1,5 +1,5 @@
 # nZombies: Revival
-Rewrite of the Zet0rz's nZombies gamemode for Garry's Mod.
+Rewrite of the [Zet0rz](https://github.com/Zet0rz)'s branch of the [nZombies](https://github.com/Zet0rz/nzombies) gamemode for Garry's Mod.
 
 ## Dependencies
 -	[Pyrition 2](https://github.com/Cryotheus/pyrition_2)
