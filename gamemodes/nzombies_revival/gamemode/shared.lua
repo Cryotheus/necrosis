@@ -5,7 +5,7 @@ GM.TeamBased = false
 GM.Website = "https://github.com/Cryotheus/nzombies_revival"
 
 --RELEASE: derive from base instead of sandbox
-DeriveGamemode("sandbox")
+DeriveGamemode("base")
 
 --post
 include("loader.lua")

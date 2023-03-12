@@ -1,0 +1,19 @@
+"nzombies_revival"
+{
+	"base"		"base"
+	"title"		"nZombies: Revival"
+	"category"	"other"
+	"maps"		"^nz_"
+	"menusystem"	"1"
+
+	"settings"
+	{
+		1
+		{
+			"name"		"sv_cheats"
+			"text"		"Prevent Winning"
+			"type"		"CheckBox"
+			"default"	"1"
+		}
+	}
+}
