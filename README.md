@@ -3,3 +3,6 @@ Rewrite of the [Zet0rz](https://github.com/Zet0rz)'s branch of the [nZombies](ht
 
 ## Dependencies
 -	[Pyrition 2](https://github.com/Cryotheus/pyrition_2)
+
+## Contributing
+Use [this](https://github.com/Cryotheus/pyrition_2/blob/main/CONTRIBUTING.md) as a reference
