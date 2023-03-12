@@ -3,7 +3,7 @@
 	"base"		"base"
 	"title"		"nZombies: Revival"
 	"category"	"other"
-	"maps"		"^nz_"
+	"maps"		"^nz_|^nzr_"
 	"menusystem"	"1"
 
 	"settings"

@@ -1,0 +1,18 @@
+{
+	"author"	:	"Cryotheum#4096 and Sinclair",
+	"title"		:	"nZombies: Revival",
+	"type"		:	"gamemode",
+	"tags"		:	[ "fun", "realism" ],
+	"ignore"	:
+	[
+		".git*",
+		"*.bat",
+		"*.gma",
+		"*.md",
+		"*.pdn",
+		"*.txt",
+		"*.zip",
+		"icon.jpg",
+		"LICENSE"
+	]
+}
