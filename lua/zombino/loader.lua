@@ -1,53 +1,14 @@
 --https://github.com/Cryotheus/cryotheums_loader
-if not PYRITION then --Pyrition is required for this gamemode, so be as annoying as possible about it
-	local message = SERVER and MsgC or chat.AddText
-	
-	local function give_me_pyrition()
-		message(
-			Color(181, 33, 33), "[nZombies: Revival]",
-			Color(255, 64, 64), "[ERROR] ",
-			Color(240, 240, 240), "Pyrition is not installed! Please install it from here: https://github.com/Cryotheus/pyrition_2",
-			SERVER and "\n" or ""
-		)
-	end
-	
-	give_me_pyrition()
-	
-	hook.Add("InitPostEntity", "Zombino", function()
-		give_me_pyrition()
-		timer.Simple(5, give_me_pyrition)
-	end)
-	
-	return
-end
+if not PYRITION then return end
 
 local config = {
 	{
-		cl_init = "download",
+		global = "shared",
 		loader = "download",
-		shared = "download",
 	},
-	
-	{
-		panels = {
-			main_menu = {
-				client = true,
-				model = "client",
-			}
-		}
-	},
-	
-	{
-		ui = {
-			main_menu = "client"
-		}
-	},
-	
-	{global = {hook = "shared"}}, --creates the hook.Run macro global
-	{ui = {post = "client"}}, --should be the last script to load
 }
 
-local branding = "nZombies: Revival (Gamemode)"
+local branding = "nZombies: Revival (Interface)"
 local color = Color(181, 33, 33) --color representing your project
 local color_generic = Color(240, 240, 240) --most frequently used color
 local silent = false --disable console messages

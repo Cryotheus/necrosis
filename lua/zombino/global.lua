@@ -1,0 +1,1 @@
+ZOMBINO = ZOMBINO or {}
