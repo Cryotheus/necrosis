@@ -50,12 +50,15 @@ local config = {
 local branding = "nZombies: Revival (Gamemode)"
 local color = Color(181, 33, 33) --color representing your project
 local color_generic = Color(240, 240, 240) --most frequently used color
+local load_extensions = true
 local silent = false --disable console messages
 
 do --do not touch
 	--locals
+	local active_gamemode = engine.ActiveGamemode()
 	local block_developer = not GetConVar("developer"):GetBool()
 	local check_words, load_late, load_methods, word_methods
+	local extension_list = {}
 	local global = _G["CryotheumsLoader_" .. branding] or {}
 	local hook_name = "CryotheumsLoader" .. branding
 	local include_list = {}
@@ -94,6 +97,31 @@ do --do not touch
 		global[hook_event] = {{script, repeated}, First = true}
 		
 		hook.Add(hook_event, hook_name, function() load_late(hook_event) end)
+	end
+	
+	local function grab_extensions(directory)
+		local files, folders = file.Find(directory .. "*", "LUA")
+		
+		--file.Exists is not reliable for directories on client
+		if files then
+			for index, folder_name in ipairs(folders) do
+				local directory = directory .. folder_name .. "/"
+				local files = file.Find(directory .. "*.lua", "LUA")
+				
+				if files then
+					for index, file_name in ipairs(files) do
+						if _G[string.upper(string.sub(file_name, 1, -5))] then
+							--added the file if a global in all uppers of its name exists
+							--client.lua will be loaded on the client because of the CLIENT variable
+							--server.lua works just as you expect, and shared.lua works because we make the global
+							table.insert(extension_list, directory .. file_name)
+						end
+					end
+				end
+			end
+			
+			for index, file_name in ipairs(files) do table.insert(extension_list, directory .. file_name) end
+		end
 	end
 	
 	function load_late(hook_event)
@@ -154,11 +182,11 @@ do --do not touch
 		developer = block_developer,
 		hosted = not game.IsDedicated() and game.SinglePlayer(),
 		if_addon = function(_words, _script, workshop_id) return not workshop_ids[workshop_id] end,
-		if_gamemode = function(_words, _script, name) return engine.ActiveGamemode() ~= name end,
+		if_gamemode = function(_words, _script, name) return active_gamemode ~= name end,
 		if_global = function(_words, _script, global_name) return _G[global_name] == nil end,
 		listen = game.IsDedicated() or game.SinglePlayer(),
 		no_addon = function(_words, _script, workshop_id) return workshop_ids[workshop_id] end,
-		no_gamemode = function(_words, _script, name) return engine.ActiveGamemode() == name end,
+		no_gamemode = function(_words, _script, name) return active_gamemode == name end,
 		no_global = function(_words, _script, global_name) return _G[global_name] ~= nil end,
 		simple = game.IsDedicated(),
 		single = not game.SinglePlayer(),
@@ -228,6 +256,37 @@ do --do not touch
 	_G["CryotheumsLoader_" .. branding] = global
 	
 	--post
+	if load_extensions then
+		local loader = debug.getinfo(1, "S").short_src
+		local loader_substring
+		local start, finish
+		
+		if GM then
+			start, finish = string.find(loader, "/.-/gamemodes/")
+			loader_substring = string.sub(loader, finish + 1)
+			--loader_substring = 
+		else
+			start, finish = string.find(loader, "/?lua/", 1, true)
+			loader_substring = string.sub(loader, start + 4, finish)
+		end
+		
+		--TODO: finish loader extensions (then merge into cryotheums_loader)
+		--print(loader)
+		--print(loader_substring)
+		
+		local loader_path = string.sub(loader, finish + 1)
+		local loader_extensions_directory = string.GetPathFromFilename(loader_path) .. "extensions/"
+		local map = game.GetMap()
+		SHARED = true --for shared.lua extension files
+		
+		grab_extensions(loader_extensions_directory)
+		grab_extensions(loader_extensions_directory .. "gamemode/" .. active_gamemode .. "/")
+		grab_extensions(loader_extensions_directory .. "map/" .. map .. "/")
+		table.sort(extension_list)
+		
+		for index, value in ipairs(extension_list) do print(index, value) end
+	end
+	
 	for hook_event, hook_functions in pairs(hook.GetTable()) do if hook_functions[hook_name] then hook.Remove(hook_event, hook_name) end end --remove outdated hooks
 	for index, addon in ipairs(engine.GetAddons()) do workshop_ids[addon.wsid] = true end --build the workshop id list
 	for priority, tree in ipairs(config) do build_list(include_list, "", tree) end --build the load order

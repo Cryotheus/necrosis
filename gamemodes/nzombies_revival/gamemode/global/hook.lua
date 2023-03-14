@@ -3,7 +3,7 @@ if ZOMBIGM then table.Empty(ZOMBIGM)
 else ZOMBIGM = {} end
 
 for key, value in pairs(GM) do
-	if isstring(key) and string.StartsWith(key, "ZombiGM") then
+	if isstring(key) and string.StartWith(key, "ZombiGM") then
 		--create the hook.Run macro
 		local short_key = string.sub(key, 8)
 		
