@@ -34,11 +34,11 @@ function PANEL:FillScreen()
 end
 
 function PANEL:Init()
+	local main_menu = self
 	self.CameraAngle = Angle(0, 0, 0)
 	
 	do --emergency button for debug
 		local button = vgui.Create("DButton", self)
-		local indexing_parent = self
 		self.CloseButton = button
 		
 		button:SetFont("DermaLarge")
@@ -47,7 +47,7 @@ function PANEL:Init()
 		button:SetText("EMERGENCY EXIT")
 		button:SetZPos(1000)
 		
-		function button:DoClick() indexing_parent:Remove() end
+		function button:DoClick() main_menu:Remove() end
 		
 		function button:Paint(width, height)
 			if self.Hovered then
@@ -62,18 +62,19 @@ function PANEL:Init()
 	do --model
 		local model = vgui.Create("ZombinoMainMenuModel", self)
 		self.Model = model
+		
+		model:SetZPos(-1)
 	end
 	
 	do --info footer
-		local panel = vgui.Create("DSizeToContents", self)
+		local sizer = vgui.Create("DSizeToContents", self)
 		
-		panel:Dock(BOTTOM)
-		--panel:SetHeight(math.max(ScrW() * 32 / 2560, 16))
+		sizer:Dock(BOTTOM)
 		
-		function panel:PerformLayout() self:SizeToChildren(false, true) end
+		function sizer:PerformLayout() self:SizeToChildren(false, true) end
 		
 		do --label
-			local label = vgui.Create("DLabel", panel)
+			local label = vgui.Create("DLabel", sizer)
 			
 			label:SetAutoStretchVertical(true)
 			label:SetText("Zombino v" .. GAMEMODE.Version)
@@ -81,7 +82,25 @@ function PANEL:Init()
 	end
 	
 	do --top left buttons
+		local sizer = vgui.Create("DSizeToContents", self)
+		self.ButtonSizer = sizer
 		
+		sizer:Dock(TOP)
+		
+		function sizer:PerformLayout() self:SizeToChildren(false, true) end
+		
+		do --drop in button
+			local button = vgui.Create("DButton", sizer)
+			
+			button:Dock(TOP)
+			button:SetFont("DermaLarge")
+			button:SetText("DROP IN")
+			
+			function button:DoClick()
+				main_menu:Close()
+				RunConsoleCommand("zb_dropin")
+			end
+		end
 	end
 	
 	self:FillScreen()
@@ -144,6 +163,9 @@ function PANEL:PerformLayout(width, height)
 	
 	model:SetPos((width - model_width) * 0.5, height - model_height)
 	model:SetSize(model_width, model_height)
+	
+	--self.ButtonSizer:DockMargin(4, 4, math.min(width * 0.7, height * 0.5), 0)
+	self.ButtonSizer:DockMargin(4, 4, width * 0.7, 0)
 end
 
 function PANEL:SetSkyBox(path)

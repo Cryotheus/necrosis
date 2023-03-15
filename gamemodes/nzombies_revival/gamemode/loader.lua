@@ -23,6 +23,7 @@ end
 
 local config = {
 	--to prevent merge conflicts, please use trailing commas and don't stack tables on the same line
+	--but always stack the the value at the first index
 	{
 		cl_init = "download",
 		loader = "download",
@@ -30,13 +31,13 @@ local config = {
 		
 		global = {
 			hook = "shared",
+			shared = true,
 		},
 	},
 	
 	{
 		panels = {
-			main_menu = {
-				client = true,
+			main_menu = {"client",
 				model = "client",
 			},
 		}
@@ -45,6 +46,16 @@ local config = {
 	{
 		bind = {
 			client = true,
+		},
+		
+		player = {
+			server = true,
+			shared = true,
+		},
+		
+		player_class = {
+			spectator = "shared",
+			survivor = "shared",
 		},
 		
 		ui = {
@@ -76,7 +87,7 @@ do --do not touch
 	--local functions
 	local function build_list(include_list, prefix, tree) --recursively explores to build load order
 		for name, object in pairs(tree) do
-			local trimmed_path = prefix .. name
+			local trimmed_path = name == 1 and string.sub(prefix, 1, -2) or prefix .. name
 			
 			if istable(object) then build_list(include_list, trimmed_path .. "/", object)
 			elseif object then
@@ -267,21 +278,17 @@ do --do not touch
 	--post
 	if load_extensions then
 		local loader = debug.getinfo(1, "S").short_src
-		local loader_substring
-		local start, finish
+		--local loader_substring
+		local _start, finish
 		
 		if GM then
-			start, finish = string.find(loader, "/.-/gamemodes/")
-			loader_substring = string.sub(loader, finish + 1)
+			_start, finish = string.find(loader, "/.-/gamemodes/")
+			--loader_substring = string.sub(loader, finish + 1)
 			--loader_substring = 
 		else
-			start, finish = string.find(loader, "/?lua/", 1, true)
-			loader_substring = string.sub(loader, start + 4, finish)
+			_start, finish = string.find(loader, "/?lua/", 1, true)
+			--loader_substring = string.sub(loader, start + 4, finish)
 		end
-		
-		--TODO: finish loader extensions (then merge into cryotheums_loader)
-		print(loader)
-		print(loader_substring)
 		
 		local loader_path = string.sub(loader, finish + 1)
 		local loader_extensions_directory = string.GetPathFromFilename(loader_path) .. "extensions/"
@@ -292,9 +299,14 @@ do --do not touch
 		grab_extensions(loader_extensions_directory .. "gamemode/" .. active_gamemode .. "/")
 		grab_extensions(loader_extensions_directory .. "map/" .. map .. "/")
 		table.sort(extension_list)
-		
-		for index, value in ipairs(extension_list) do print(index, value) end
 	end
+	
+	--give access to the config to extensions
+	CryotheumsLoaderActiveConfig = config
+	
+	for index, value in ipairs(extension_list) do include(value) end
+	
+	CryotheumsLoaderActiveConfig = nil
 	
 	for hook_event, hook_functions in pairs(hook.GetTable()) do if hook_functions[hook_name] then hook.Remove(hook_event, hook_name) end end --remove outdated hooks
 	for index, addon in ipairs(engine.GetAddons()) do workshop_ids[addon.wsid] = true end --build the workshop id list
