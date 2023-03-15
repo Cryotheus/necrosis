@@ -14,7 +14,7 @@ local detoured_hooks = {
 local function always_true() return true end
 
 --gamemode
-function GM:ZombiGMUIMainMenuDisable()
+function GM:NecrosisUIMainMenuDisable()
 	self.UIMainMenuPanel = false
 	
 	--undo detours
@@ -23,7 +23,7 @@ function GM:ZombiGMUIMainMenuDisable()
 	self.PreDrawEffects = nil
 end
 
-function GM:ZombiGMUIMainMenuEnable(panel)
+function GM:NecrosisUIMainMenuEnable(panel)
 	--make detours for the hooks
 	--did it like this because I wanted to see how high I could get the main menu frame rate :p
 	for index, hook_name in ipairs(detoured_hooks) do old_functions[hook_name], self[hook_name] = self[hook_name], always_true end
@@ -32,13 +32,13 @@ function GM:ZombiGMUIMainMenuEnable(panel)
 	self.UIMainMenuPanel = panel
 end
 
-function GM:ZombiGMUIMainMenuOpen()
+function GM:NecrosisUIMainMenuOpen()
 	if self.UIMainMenuPanel then return end
 	
 	vgui.Create("ZombinoMainMenu")
 end
 
-function GM:ZombiGMUIMainMenuSetSkyMaterial(path)
+function GM:NecrosisUIMainMenuSetSkyMaterial(path)
 	sky_materials = {
 		Material(path .. "ft"),
 		Material(path .. "bk"),
@@ -53,8 +53,8 @@ end
 concommand.Add("necrosis_debug", function() NECROSIS:UIMainMenuOpen() end) --TODO: remove debug
 
 --hooks
-hook.Add("Tick", "ZombiGMUIMainMenu", function()
+hook.Add("Tick", "NecrosisUIMainMenu", function()
 	if not LocalPlayer():IsValid() then NECROSIS:UIMainMenuOpen() end
 	
-	hook.Remove("Tick", "ZombiGMUIMainMenu")
+	hook.Remove("Tick", "NecrosisUIMainMenu")
 end)

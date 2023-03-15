@@ -195,7 +195,7 @@ function PANEL:Init()
 				button:SetFont("DermaLarge")
 				button:SetText("Icon")
 				
-				function button:DoClick() gui.OpenURL("https://github.com/Cryotheus/nzombies_revival") end
+				function button:DoClick() gui.OpenURL(GAMEMODE.Website) end
 			end
 		end
 	end

@@ -17,7 +17,7 @@ end
 
 function GM:PlayerUse(ply, _entity) return ply:Team() == TEAM_SURVIVOR end
 
-function GM:ZombiGMPlayerSpawnAsSpectator(ply, respawn)
+function GM:NecrosisPlayerSpawnAsSpectator(ply, respawn)
 	player_manager.SetPlayerClass(ply, "player_spectator")
 	ply:RemoveAllItems()
 	ply:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
@@ -27,7 +27,7 @@ function GM:ZombiGMPlayerSpawnAsSpectator(ply, respawn)
 	if respawn then ply:Spawn() end
 end
 
-function GM:ZombiGMPlayerSpawnAsSurvivor(ply, respawn)
+function GM:NecrosisPlayerSpawnAsSurvivor(ply, respawn)
 	player_manager.SetPlayerClass(ply, "player_survivor")
 	ply:UnSpectate()
 	ply:SetCollisionGroup(COLLISION_GROUP_PLAYER)
