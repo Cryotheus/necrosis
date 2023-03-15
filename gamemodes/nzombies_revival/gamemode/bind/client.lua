@@ -8,13 +8,19 @@ local bind_hooks = { --why did garry make these server side, and not in Lua? now
 	gm_showteam = "ShowTeam",
 }
 
+local block_binds = {
+	gm_showspare1 = true,
+	gm_showspare2 = true,
+}
+
 --gamemode functions
-function GM:PlayerBindPress(_ply, bind, _pressed, _code)
+function GM:PlayerBindPress(_ply, bind, pressed, _code)
 	local method = bind_hooks[bind]
 	
+	if not pressed and block_binds[bind] then return true end
 	if method then hook.Run(method) end
 	
-	return false
+	return block_binds[bind] or false
 end
 
 function GM:ShowTeam() self:UIMainMenuOpen() end
