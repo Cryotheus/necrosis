@@ -3,7 +3,7 @@ local camera_position = Vector(50, 0, 45)
 local PANEL = {}
 
 --panel functions
-function PANEL:DoClick() error("let the player select a model") end
+function PANEL:DoClick() print("let the player select a model") end
 
 function PANEL:DrawModel(client_model)
 	local end_x, end_y = self:LocalToScreen(self:GetWide(), self:GetTall())

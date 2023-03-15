@@ -2,6 +2,7 @@ GM.Author = "Cryotheum#4096, Sinclair"
 GM.Email = "N/A"
 GM.Name = "nZombies: Revival"
 GM.TeamBased = false
+GM.Version = "0.1.0"
 GM.Website = "https://github.com/Cryotheus/nzombies_revival"
 
 --RELEASE: derive from base instead of sandbox

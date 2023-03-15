@@ -27,6 +27,10 @@ local config = {
 		cl_init = "download",
 		loader = "download",
 		shared = "download",
+		
+		global = {
+			hook = "shared",
+		},
 	},
 	
 	{
@@ -39,13 +43,17 @@ local config = {
 	},
 	
 	{
+		bind = {
+			client = true,
+		},
+		
 		ui = {
 			main_menu = "client",
 		},
 	},
 	
 	--only exception to the rule above, as this should be the last script to load
-	{global = {hook = "shared"}}, 
+	{global = {post = "shared"}}, 
 }
 
 local branding = "nZombies: Revival (Gamemode)"

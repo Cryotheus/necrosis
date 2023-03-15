@@ -15,7 +15,7 @@ local function always_true() return true end
 
 --gamemode
 function GM:ZombiGMUIMainMenuDisable()
-	self.UIMainMenuRender = false
+	self.UIMainMenuPanel = false
 	
 	--undo detours
 	for index, hook_name in ipairs(detoured_hooks) do self[hook_name], old_functions[hook_name] = old_functions[hook_name] end
@@ -29,11 +29,11 @@ function GM:ZombiGMUIMainMenuEnable(panel)
 	for index, hook_name in ipairs(detoured_hooks) do old_functions[hook_name], self[hook_name] = self[hook_name], always_true end
 	
 	--self.PreDrawEffects = pre_draw_effects_override
-	self.UIMainMenuRender = panel
+	self.UIMainMenuPanel = panel
 end
 
 function GM:ZombiGMUIMainMenuOpen()
-	if self.UIMainMenuRender then return end
+	if self.UIMainMenuPanel then return end
 	
 	vgui.Create("ZombinoMainMenu")
 end

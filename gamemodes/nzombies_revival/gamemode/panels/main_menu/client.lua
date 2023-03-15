@@ -36,29 +36,58 @@ end
 function PANEL:Init()
 	self.CameraAngle = Angle(0, 0, 0)
 	
-	do
+	do --emergency button for debug
 		local button = vgui.Create("DButton", self)
 		local indexing_parent = self
 		self.CloseButton = button
 		
+		button:SetFont("DermaLarge")
 		button:SetPos(0, 0)
 		button:SetSize(400, 120)
-		button:SetText("Emergency Exit")
+		button:SetText("EMERGENCY EXIT")
+		button:SetZPos(1000)
 		
-		function button:DoClick() indexing_parent:Close() end
-		function button:Paint() end
+		function button:DoClick() indexing_parent:Remove() end
+		
+		function button:Paint(width, height)
+			if self.Hovered then
+				surface.SetDrawColor(255, 0, 0)
+				surface.DrawRect(0, 0, width, height)
+				
+				self:SetTextColor(color_white)
+			else self:SetTextColor(color_transparent) end
+		end
 	end
 	
-	do
+	do --model
 		local model = vgui.Create("ZombinoMainMenuModel", self)
+		self.Model = model
+	end
+	
+	do --info footer
+		local panel = vgui.Create("DSizeToContents", self)
 		
-		model:Dock(FILL)
-		model:DockMargin(ScrW() * 0.3, ScrH() * 0.2, ScrW() * 0.3, 0)
+		panel:Dock(BOTTOM)
+		--panel:SetHeight(math.max(ScrW() * 32 / 2560, 16))
+		
+		function panel:PerformLayout() self:SizeToChildren(false, true) end
+		
+		do --label
+			local label = vgui.Create("DLabel", panel)
+			
+			label:SetAutoStretchVertical(true)
+			label:SetText("Zombino v" .. GAMEMODE.Version)
+		end
+	end
+	
+	do --top left buttons
+		
 	end
 	
 	self:FillScreen()
 	self:SetSkyBox("skybox/sky_wasteland02")
 	
+	gui.HideGameUI()
 	hook.Add("OnScreenSizeChanged", self, self.FillScreen)
 	self:MakePopup()
 	self:DoModal()
@@ -68,11 +97,20 @@ end
 function PANEL:OnRemove() ZOMBIGM:UIMainMenuDisable() end
 
 function PANEL:Paint()
+	if gui.IsGameUIVisible() then
+		self.Paint = nil
+		
+		self:Close()
+		
+		return
+	end
+	
 	local width_half = ScrW() * 0.5
 	local x_fraction = (width_half - gui.MouseX()) / width_half
 	local y_fraction = (gui.MouseY() - ScrH() * 0.5) / width_half
 	
-	local angles = LerpAngle(RealFrameTime(), self.CameraAngle, Angle(y_fraction * 30, x_fraction * 30, 0))
+	local aim = system.HasFocus() and Angle(y_fraction * 30, x_fraction * 30, 0) or angle_zero
+	local angles = LerpAngle(RealFrameTime(), self.CameraAngle, aim)
 	
 	self.CameraAngle:Set(angles)
 	
@@ -97,6 +135,15 @@ function PANEL:Paint()
 	render.SuppressEngineLighting(false)
 	cam.IgnoreZ(false)
 	cam.End3D()
+end
+
+function PANEL:PerformLayout(width, height)
+	local model = self.Model
+	local model_width, model_height = width * 0.4, height * 0.8
+	--ScrW() * 0.3, ScrH() * 0.2, ScrW() * 0.3, 0
+	
+	model:SetPos((width - model_width) * 0.5, height - model_height)
+	model:SetSize(model_width, model_height)
 end
 
 function PANEL:SetSkyBox(path)
