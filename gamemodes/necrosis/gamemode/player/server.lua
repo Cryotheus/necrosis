@@ -40,11 +40,11 @@ end
 concommand.Add("necrosis_dropin", function(ply)
 	if not ply:IsValid() then return end
 	
-	NECROSIS:PlayerSpawnAsSurvivor(ply, true)
+	GAMEMODE:PlayerSpawnAsSurvivor(ply, true)
 end)
 
 concommand.Add("necrosis_spectate", function(ply)
 	if not ply:IsValid() then return end
 	
-	NECROSIS:PlayerSpawnAsSpectator(ply, true)
+	GAMEMODE:PlayerSpawnAsSpectator(ply, true)
 end)

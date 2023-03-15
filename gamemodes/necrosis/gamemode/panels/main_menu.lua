@@ -209,7 +209,7 @@ function PANEL:Init()
 	hook.Add("OnScreenSizeChanged", self, self.FillScreen)
 	self:MakePopup()
 	self:DoModal()
-	NECROSIS:UIMainMenuEnable(self)
+	GAMEMODE:UIMainMenuEnable(self)
 end
 
 function PANEL:MusicVolume(volume)
@@ -223,7 +223,7 @@ function PANEL:OnRemove()
 	
 	if IsValid(stream) then stream:Stop() end
 	
-	NECROSIS:UIMainMenuDisable()
+	GAMEMODE:UIMainMenuDisable()
 end
 
 function PANEL:Paint()
