@@ -23,4 +23,5 @@ function GM:PlayerBindPress(_ply, bind, pressed, _code)
 	return block_binds[bind] or false
 end
 
-function GM:ShowTeam() self:UIMainMenuOpen() end
+function GM:ShowHelp() self:UIMainMenuOpen() end
+function GM:ShowTeam() end

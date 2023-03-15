@@ -26,19 +26,26 @@ local config = {
 	--but always stack the the value at the first index
 	{
 		cl_init = "download",
-		loader = "download",
-		shared = "download",
 		
 		global = {
 			hook = "shared",
 			shared = true,
 		},
+		
+		loader = "download",
+		shared = "download",
 	},
 	
 	{
 		panels = {
 			main_menu = {"client",
 				model = "client",
+			},
+			
+			settings_menu = {"client",
+				audio = "client",
+				binds = "client",
+				sheet = "client",
 			},
 		}
 	},

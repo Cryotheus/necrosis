@@ -1,7 +1,9 @@
 --locals
+local large_margin = 16
 local PANEL = {}
 local sky_distance = 200
 local sky_quadrant_angles = {180, 180, 180, 180, 0, 0}
+local zb_music_volume = CreateConVar("zb_music_volume", "1.2", FCVAR_ARCHIVE, "Music volume", 0, 5)
 
 --local tables
 local sky_quadrant_normals = {
@@ -68,16 +70,34 @@ function PANEL:Init()
 	
 	do --info footer
 		local sizer = vgui.Create("DSizeToContents", self)
+		self.InfoSizer = sizer
 		
 		sizer:Dock(BOTTOM)
+		sizer:SetHeight(100)
 		
-		function sizer:PerformLayout() self:SizeToChildren(false, true) end
+		function sizer:PerformLayout()
+			local version_label = sizer.VersionLabel
+			
+			surface.SetFont(version_label:GetFont())
+			
+			local version_width, version_height = surface.GetTextSize(version_label:GetText())
+			
+			version_label:SetSize(version_width + 16, version_height + 8)
+			self:SizeToChildren(false, true)
+		end
 		
 		do --label
 			local label = vgui.Create("DLabel", sizer)
+			sizer.VersionLabel = label
 			
-			label:SetAutoStretchVertical(true)
+			label:SetContentAlignment(5)
+			label:SetFont("DermaDefaultBold")
 			label:SetText("Zombino v" .. GAMEMODE.Version)
+			
+			function label:Paint(width, height)
+				surface.SetDrawColor(0, 0, 0, 192)
+				surface.DrawRect(0, 0, width, height)
+			end
 		end
 	end
 	
@@ -113,7 +133,7 @@ function PANEL:Init()
 			sizer.SpectateButton = button
 			
 			button:Dock(TOP)
-			button:DockMargin(0, 4, 0, 0)
+			button:DockMargin(0, large_margin, 0, 0)
 			button:SetFont("DermaLarge")
 			button:SetText("Spectate")
 			
@@ -128,27 +148,63 @@ function PANEL:Init()
 			sizer.BottomSizer = bottom_sizer
 			
 			bottom_sizer:Dock(TOP)
-			bottom_sizer:DockMargin(0, 4, 0, 0)
+			bottom_sizer:DockMargin(0, large_margin, 0, 0)
 			
 			function bottom_sizer:PerformLayout(width)
+				local button_height = math.max(width * 0.1, 18)
+				local icon_button = self.IconButton
+				local settings_button = self.SettingsButton
 				
+				icon_button:SetPos(width - button_height, 0)
+				icon_button:SetSize(button_height, button_height)
+				
+				settings_button:DockMargin(0, 0, button_height + large_margin, 0)
+				settings_button:SetHeight(button_height)
 				
 				self:SizeToChildren(false, true)
 			end
 			
 			do --settings button
+				local button = vgui.Create("DButton", bottom_sizer)
+				bottom_sizer.SettingsButton = button
 				
+				button:Dock(TOP)
+				button:SetFont("DermaLarge")
+				button:SetText("Settings")
+				
+				function button:DoClick()
+					local settings_menu = main_menu.SettingsMenu
+					
+					if IsValid(settings_menu) then
+						main_menu.SettingsMenu = nil
+						
+						settings_menu:Remove()
+					else
+						settings_menu = vgui.Create("ZombinoSettingsMenu", main_menu)
+						main_menu.SettingsMenu = settings_menu
+						
+						settings_menu:SetZPos(10)
+					end
+				end
 			end
 			
 			do --other button
+				local button = vgui.Create("DButton", bottom_sizer)
+				bottom_sizer.IconButton = button
 				
+				button:SetFont("DermaLarge")
+				button:SetText("Icon")
+				
+				function button:DoClick() gui.OpenURL("https://github.com/Cryotheus/nzombies_revival") end
 			end
 		end
 	end
 	
 	self:FillScreen()
+	self:PlayMusic("sound/zombino/music/main_menu.mp3", "https://cdn.discordapp.com/attachments/652513124611522563/1085636070735102143/mainmenu.mp3")
 	self:SetSkyBox("skybox/sky_wasteland02")
 	
+	cvars.AddChangeCallback("zb_music_volume", function() if self:IsValid() then self:MusicVolume(zb_music_volume:GetFloat()) end end, "ZombinoMainMenu")
 	gui.HideGameUI()
 	hook.Add("OnScreenSizeChanged", self, self.FillScreen)
 	self:MakePopup()
@@ -156,7 +212,19 @@ function PANEL:Init()
 	ZOMBIGM:UIMainMenuEnable(self)
 end
 
-function PANEL:OnRemove() ZOMBIGM:UIMainMenuDisable() end
+function PANEL:MusicVolume(volume)
+	local stream = self.MusicStream
+	
+	if IsValid(stream) then stream:SetVolume(volume) end
+end
+
+function PANEL:OnRemove()
+	local stream = self.MusicStream
+	
+	if IsValid(stream) then stream:Stop() end
+	
+	ZOMBIGM:UIMainMenuDisable()
+end
 
 function PANEL:Paint()
 	if gui.IsGameUIVisible() then
@@ -208,7 +276,40 @@ function PANEL:PerformLayout(width, height)
 	model:SetSize(model_width, model_height)
 	
 	--self.ButtonSizer:DockMargin(4, 4, math.min(width * 0.7, height * 0.5), 0)
-	self.ButtonSizer:DockMargin(4, 4, width * 0.7, 0)
+	self.ButtonSizer:DockMargin(large_margin, large_margin, width * 0.7, 0)
+end
+
+function PANEL:PlayMusic(sound_path, fallback_url)
+	local exists = file.Exists(sound_path, "GAME")
+	
+	local function callback(stream, ...)
+		if stream and stream:IsValid() then
+			if self:IsValid() then
+				self.MusicStream = stream
+				
+				stream:SetVolume(zb_music_volume:GetFloat())
+				stream:EnableLooping(true)
+			else steam:Stop() end
+		end
+	end
+	
+	if exists then sound.PlayFile(sound_path, "noblock", callback)
+	else sound.PlayURL(fallback_url, "noblock", callback) end
+end
+
+function PANEL:PlayMusic(sound_path, fallback_url)
+	local exists = file.Exists(sound_path, "GAME"); --we NEED the semicolon here
+	
+	(exists and sound.PlayFile or sound.PlayURL)(exists and sound_path or fallback_url, "noblock", function(stream, ...)
+		if stream and stream:IsValid() then
+			if self:IsValid() then
+				self.MusicStream = stream
+				
+				stream:SetVolume(zb_music_volume:GetFloat())
+				stream:EnableLooping(true)
+			else steam:Stop() end
+		end
+	end)
 end
 
 function PANEL:SetSkyBox(path)
