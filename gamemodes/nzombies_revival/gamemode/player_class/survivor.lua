@@ -5,7 +5,7 @@ local PLAYER = {
 	CrouchedWalkSpeed = 0.4, --multiply move speed by this when crouching
 	DisplayName = "Survivor",
 	DropWeaponOnDie = false, --do we drop our weapon when we die
-	DuckSpeed = 0.3, --how fast to go from not ducking, to ducking
+	DuckSpeed = 0.1, --how fast to go from not ducking, to ducking
 	JumpPower = 200, --how powerful our jump should be
 	MaxArmor = 0, --max armor we can have
 	MaxHealth = 100, --max health we can have
@@ -14,7 +14,7 @@ local PLAYER = {
 	StartArmor = 0, --how much armour we start with
 	StartHealth = 100, --how much health we start with
 	TeammateNoCollide = false, --do we collide with teammates or run straight through them
-	UnDuckSpeed = 0.3, --how fast to go from ducking, to not ducking
+	UnDuckSpeed = 0.1, --how fast to go from ducking, to not ducking
 	UseVMHands = true, --uses viewmodel hands
 	WalkSpeed = 180, --how fast to move when not running
 }
@@ -24,8 +24,7 @@ function PLAYER:CalcView(_view) end
 function PLAYER:CreateMove(_command) end
 function PLAYER:Death(_inflictor, _attacker) end
 function PLAYER:FinishMove(_move) end
---function PLAYER:GetHandsModel() return player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(self.Player:GetModel())) end
-function PLAYER:GetHandsModel() return {model = "models/weapons/c_arms_cstrike.mdl", skin = 1, body = "0100000"} end
+function PLAYER:GetHandsModel() return player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(self.Player:GetModel())) end
 function PLAYER:Init() end
 function PLAYER:Loadout()
 	local ply = self.Player
@@ -52,6 +51,7 @@ function PLAYER:ShouldDrawLocal() end
 function PLAYER:Spawn()
 	local ply = self.Player
 	
+	ply:SetupHands()
 	ply:SetViewOffset(Vector(0, 0, 64))
 	ply:SetViewOffsetDucked(Vector(0, 0, 28))
 end

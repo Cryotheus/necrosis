@@ -87,10 +87,16 @@ function PANEL:Init()
 		
 		sizer:Dock(TOP)
 		
-		function sizer:PerformLayout() self:SizeToChildren(false, true) end
+		function sizer:PerformLayout(width)
+			self.DropInButton:SetHeight(math.max(width * 0.2, 36))
+			self.SpectateButton:SetHeight(math.max(width * 0.1, 18))
+			
+			self:SizeToChildren(false, true)
+		end
 		
 		do --drop in button
 			local button = vgui.Create("DButton", sizer)
+			sizer.DropInButton = button
 			
 			button:Dock(TOP)
 			button:SetFont("DermaLarge")
@@ -99,6 +105,43 @@ function PANEL:Init()
 			function button:DoClick()
 				main_menu:Close()
 				RunConsoleCommand("zb_dropin")
+			end
+		end
+		
+		do --spectate button
+			local button = vgui.Create("DButton", sizer)
+			sizer.SpectateButton = button
+			
+			button:Dock(TOP)
+			button:DockMargin(0, 4, 0, 0)
+			button:SetFont("DermaLarge")
+			button:SetText("Spectate")
+			
+			function button:DoClick()
+				main_menu:Close()
+				RunConsoleCommand("zb_spectate")
+			end
+		end
+		
+		do --bottom buttons sizer
+			local bottom_sizer = vgui.Create("DSizeToContents", sizer)
+			sizer.BottomSizer = bottom_sizer
+			
+			bottom_sizer:Dock(TOP)
+			bottom_sizer:DockMargin(0, 4, 0, 0)
+			
+			function bottom_sizer:PerformLayout(width)
+				
+				
+				self:SizeToChildren(false, true)
+			end
+			
+			do --settings button
+				
+			end
+			
+			do --other button
+				
 			end
 		end
 	end
