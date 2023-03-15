@@ -22,6 +22,7 @@ if not PYRITION then --Pyrition is required for this gamemode, so be as annoying
 end
 
 local config = {
+	--to prevent merge conflicts, please use trailing commas and don't stack tables on the same line
 	{
 		cl_init = "download",
 		loader = "download",
@@ -33,18 +34,18 @@ local config = {
 			main_menu = {
 				client = true,
 				model = "client",
-			}
+			},
 		}
 	},
 	
 	{
 		ui = {
-			main_menu = "client"
-		}
+			main_menu = "client",
+		},
 	},
 	
-	{global = {hook = "shared"}}, --creates the hook.Run macro global
-	{ui = {post = "client"}}, --should be the last script to load
+	--only exception to the rule above, as this should be the last script to load
+	{global = {hook = "shared"}}, 
 }
 
 local branding = "nZombies: Revival (Gamemode)"
@@ -271,8 +272,8 @@ do --do not touch
 		end
 		
 		--TODO: finish loader extensions (then merge into cryotheums_loader)
-		--print(loader)
-		--print(loader_substring)
+		print(loader)
+		print(loader_substring)
 		
 		local loader_path = string.sub(loader, finish + 1)
 		local loader_extensions_directory = string.GetPathFromFilename(loader_path) .. "extensions/"
