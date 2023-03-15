@@ -50,11 +50,11 @@ function GM:ZombiGMUIMainMenuSetSkyMaterial(path)
 end
 
 --commands
-concommand.Add("zb_debug", function() ZOMBIGM:UIMainMenuOpen() end) --TODO: remove debug
+concommand.Add("necrosis_debug", function() NECROSIS:UIMainMenuOpen() end) --TODO: remove debug
 
 --hooks
 hook.Add("Tick", "ZombiGMUIMainMenu", function()
-	if not LocalPlayer():IsValid() then ZOMBIGM:UIMainMenuOpen() end
+	if not LocalPlayer():IsValid() then NECROSIS:UIMainMenuOpen() end
 	
 	hook.Remove("Tick", "ZombiGMUIMainMenu")
 end)

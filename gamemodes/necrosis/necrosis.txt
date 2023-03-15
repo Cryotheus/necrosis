@@ -1,9 +1,9 @@
-"nzombies_revival"
+"necrosis"
 {
 	"base"		"base"
-	"title"		"nZombies: Revival"
+	"title"		"Necrosis"
 	"category"	"other"
-	"maps"		"^nz_|^nzr_"
+	"maps"		"^necro_"
 	"menusystem"	"1"
 
 	"settings"

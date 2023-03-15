@@ -37,14 +37,14 @@ function GM:ZombiGMPlayerSpawnAsSurvivor(ply, respawn)
 end
 
 --commands
-concommand.Add("zb_dropin", function(ply)
+concommand.Add("necrosis_dropin", function(ply)
 	if not ply:IsValid() then return end
 	
-	ZOMBIGM:PlayerSpawnAsSurvivor(ply, true)
+	NECROSIS:PlayerSpawnAsSurvivor(ply, true)
 end)
 
-concommand.Add("zb_spectate", function(ply)
+concommand.Add("necrosis_spectate", function(ply)
 	if not ply:IsValid() then return end
 	
-	ZOMBIGM:PlayerSpawnAsSpectator(ply, true)
+	NECROSIS:PlayerSpawnAsSpectator(ply, true)
 end)

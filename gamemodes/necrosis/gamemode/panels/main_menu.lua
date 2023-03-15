@@ -3,7 +3,7 @@ local large_margin = 16
 local PANEL = {}
 local sky_distance = 200
 local sky_quadrant_angles = {180, 180, 180, 180, 0, 0}
-local zb_music_volume = CreateConVar("zb_music_volume", "1.2", FCVAR_ARCHIVE, "Music volume", 0, 5)
+local necrosis_music_volume = CreateConVar("necrosis_music_volume", "1.2", FCVAR_ARCHIVE, "Music volume", 0, 5)
 
 --local tables
 local sky_quadrant_normals = {
@@ -124,7 +124,7 @@ function PANEL:Init()
 			
 			function button:DoClick()
 				main_menu:Close()
-				RunConsoleCommand("zb_dropin")
+				RunConsoleCommand("necrosis_dropin")
 			end
 		end
 		
@@ -139,7 +139,7 @@ function PANEL:Init()
 			
 			function button:DoClick()
 				main_menu:Close()
-				RunConsoleCommand("zb_spectate")
+				RunConsoleCommand("necrosis_spectate")
 			end
 		end
 		
@@ -204,12 +204,12 @@ function PANEL:Init()
 	self:PlayMusic("sound/zombino/music/main_menu.mp3", "https://cdn.discordapp.com/attachments/652513124611522563/1085636070735102143/mainmenu.mp3")
 	self:SetSkyBox("skybox/sky_wasteland02")
 	
-	cvars.AddChangeCallback("zb_music_volume", function() if self:IsValid() then self:MusicVolume(zb_music_volume:GetFloat()) end end, "ZombinoMainMenu")
+	cvars.AddChangeCallback("necrosis_music_volume", function() if self:IsValid() then self:MusicVolume(necrosis_music_volume:GetFloat()) end end, "ZombinoMainMenu")
 	gui.HideGameUI()
 	hook.Add("OnScreenSizeChanged", self, self.FillScreen)
 	self:MakePopup()
 	self:DoModal()
-	ZOMBIGM:UIMainMenuEnable(self)
+	NECROSIS:UIMainMenuEnable(self)
 end
 
 function PANEL:MusicVolume(volume)
@@ -223,7 +223,7 @@ function PANEL:OnRemove()
 	
 	if IsValid(stream) then stream:Stop() end
 	
-	ZOMBIGM:UIMainMenuDisable()
+	NECROSIS:UIMainMenuDisable()
 end
 
 function PANEL:Paint()
@@ -287,7 +287,7 @@ function PANEL:PlayMusic(sound_path, fallback_url)
 			if self:IsValid() then
 				self.MusicStream = stream
 				
-				stream:SetVolume(zb_music_volume:GetFloat())
+				stream:SetVolume(necrosis_music_volume:GetFloat())
 				stream:EnableLooping(true)
 			else steam:Stop() end
 		end
@@ -305,7 +305,7 @@ function PANEL:PlayMusic(sound_path, fallback_url)
 			if self:IsValid() then
 				self.MusicStream = stream
 				
-				stream:SetVolume(zb_music_volume:GetFloat())
+				stream:SetVolume(necrosis_music_volume:GetFloat())
 				stream:EnableLooping(true)
 			else steam:Stop() end
 		end

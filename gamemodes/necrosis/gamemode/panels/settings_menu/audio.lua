@@ -7,11 +7,11 @@ function PANEL:Init()
 	
 	do --music slider
 		local slider = vgui.Create("DNumSlider", self)
-		local zb_music_volume = GetConVar("zb_music_volume")
+		local necrosis_music_volume = GetConVar("necrosis_music_volume")
 		
 		slider:Dock(TOP)
-		slider:SetConVar("zb_music_volume")
-		slider:SetMinMax(zb_music_volume:GetMin(), zb_music_volume:GetMax())
+		slider:SetConVar("necrosis_music_volume")
+		slider:SetMinMax(necrosis_music_volume:GetMin(), necrosis_music_volume:GetMax())
 		slider:SetText("Music Volume")
 	end
 end
