@@ -40,6 +40,9 @@ local config = {
 		panels = {
 			main_menu = {"client",
 				model = "client",
+				player = "client",
+				player_list = "client",
+				players = "client",
 			},
 			
 			settings_menu = {"client",
@@ -78,7 +81,7 @@ local config = {
 }
 
 local branding = "Necrosis"
-local color = Color(181, 33, 33) --color representing your project
+local color = Color(255, 105, 12) --color representing your project
 local color_generic = Color(240, 240, 240) --most frequently used color
 local load_extensions = true
 local silent = false --disable console messages

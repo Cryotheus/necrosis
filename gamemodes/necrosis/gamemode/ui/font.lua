@@ -76,6 +76,7 @@ function GM:UIFontRegister(key, font, size)
 end
 
 --post
+GM:UIFontRegister("MainMenuInfo", "Google Sans", 16)
 GM:UIFontRegister("MainMenuLevel", "Google Sans", 48)
 GM:UIFontRegister("MainMenuName", "Google Sans", 28)
 GM:UIFontRegister("MainMenuTab", "Google Sans", 32)

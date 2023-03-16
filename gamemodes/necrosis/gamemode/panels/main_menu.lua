@@ -27,13 +27,6 @@ local sky_quadrant_positions = {
 	Vector(0, 0, -sky_distance)
 }
 
---local function
-local function get_text_size(panel)
-	surface.SetFont(panel:GetFont())
-	
-	return surface.GetTextSize(panel:GetText())
-end
-
 --panel functions
 function PANEL:Close()
 	--something fancy
@@ -86,8 +79,25 @@ function PANEL:Init()
 		
 		swapper:Dock(FILL)
 		
+		do --play
+			local panel = vgui.Create("EditablePanel", self)
+			swapper.PlayPanel = panel
+			
+			swapper:Add("Play", panel)
+			
+			function panel:PerformLayout(width) self.PlayerInfoPanel:SetWide(width * 0.2) end
+			
+			do --player info
+				local player_info = vgui.Create("NecrosisMainMenuPlayers", panel)
+				panel.PlayerInfoPanel = player_info
+				
+				player_info:Dock(LEFT)
+			end
+		end
+		
 		do --settings
 			local settings = vgui.Create("NecrosisSettingsMenu", self)
+			swapper.SettingsPanel = settings
 			
 			swapper:Add("Settings", settings)
 		end
@@ -116,7 +126,7 @@ function PANEL:Init()
 			
 			function top_panel:PerformLayout(width, height)
 				local play_label = self.PlayLabel
-				local play_width, play_height = get_text_size(play_label)
+				local play_width, play_height = play_label:GetTextSize()
 				local profile_panel = self.ProfilePanel
 				
 				play_label:DockMargin(0, height * 0.9 - play_height, 0, 0)
@@ -136,7 +146,7 @@ function PANEL:Init()
 				label:SetText(game.SinglePlayer() and "SINGLEPLAYER" or game.IsDedicated() and "MULTIPLAYER" or "HOSTED MULTIPLAYER")
 				
 				function label:Paint(width, height)
-					local text_height = select(2, get_text_size(self))
+					local text_height = select(2, self:GetTextSize())
 					local text_y = (height + text_height) * 0.5
 					
 					surface.SetDrawColor(192, 192, 192)
@@ -320,7 +330,7 @@ function PANEL:Init()
 		function panel:PerformLayout()
 			local version_label = self.VersionLabel
 			
-			version_label:SetWide(get_text_size(version_label))
+			version_label:SetWide(version_label:GetTextSize() * 1.1)
 		end
 		
 		do --label
@@ -330,7 +340,7 @@ function PANEL:Init()
 			label:Dock(RIGHT)
 			label:DockMargin(0, 0, 1, 1)
 			label:SetContentAlignment(2)
-			label:SetNecrosisFont("MainMenuTab")
+			label:SetNecrosisFont("MainMenuInfo")
 			label:SetText("Necrosis v" .. GAMEMODE.Version)
 		end
 	end
