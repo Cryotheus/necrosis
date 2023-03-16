@@ -1,8 +1,4 @@
 --locals
-local color_gray = Color(180, 180, 180)
-local color_pale_blue = Color(182, 202, 214)
---local large_margin = 16
-local material_gradient_up = Material("gui/gradient_up")
 local PANEL = {}
 local sky_distance = 200
 local sky_quadrant_angles = {180, 180, 180, 180, 0, 0}
@@ -93,6 +89,11 @@ function PANEL:Init()
 				
 				player_info:Dock(LEFT)
 			end
+			
+			do --game panel
+				local game_panel = vgui.Create("EditablePanel", panel)
+				panel.GamePanel = game_panel
+			end
 		end
 		
 		do --settings
@@ -104,8 +105,8 @@ function PANEL:Init()
 	end
 	
 	do --header
-		local panel = vgui.Create("DPanel", self)
-		panel.Paint = nil
+		local panel = vgui.Create("Panel", self)
+		--panel.Paint = nil
 		self.HeaderPanel = panel
 		
 		panel:Dock(TOP)
@@ -118,8 +119,8 @@ function PANEL:Init()
 		function panel:PerformLayout(_width, height) self.BottomPanel:SetTall(height * 0.4) end
 		
 		do --top
-			local top_panel = vgui.Create("DPanel", panel)
-			top_panel.Paint = nil
+			local top_panel = vgui.Create("Panel", panel)
+			--top_panel.Paint = nil
 			panel.TopPanel = top_panel
 			
 			top_panel:Dock(FILL)
@@ -155,8 +156,8 @@ function PANEL:Init()
 			end
 			
 			do --profile panel
-				local profile_panel = vgui.Create("DPanel", top_panel)
-				profile_panel.Paint = nil
+				local profile_panel = vgui.Create("Panel", top_panel)
+				--profile_panel.Paint = nil
 				top_panel.ProfilePanel = profile_panel
 				
 				profile_panel:Dock(RIGHT)
@@ -191,8 +192,8 @@ function PANEL:Init()
 				end
 				
 				do --progress bar and name
-					local fill_panel = vgui.Create("DPanel", profile_panel)
-					fill_panel.Paint = nil
+					local fill_panel = vgui.Create("Panel", profile_panel)
+					--fill_panel.Paint = nil
 					profile_panel.FillPanel = fill_panel
 					
 					fill_panel:Dock(FILL)
@@ -215,7 +216,7 @@ function PANEL:Init()
 					end
 					
 					do --level bar
-						local bar = vgui.Create("DPanel", fill_panel)
+						local bar = vgui.Create("Panel", fill_panel)
 						fill_panel.BarPanel = bar
 						
 						bar:Dock(BOTTOM)
@@ -233,91 +234,39 @@ function PANEL:Init()
 		end
 		
 		do --bottom
-			local bottom_panel = vgui.Create("DPanel", panel)
-			bottom_panel.Paint = nil
+			local bottom_panel = vgui.Create("Panel", panel)
+			--bottom_panel.Paint = nil
 			panel.BottomPanel = bottom_panel
 			
 			bottom_panel:Dock(BOTTOM)
 			
 			function bottom_panel:PerformLayout(width)
-				local tabs_panel = self.TabsPanel
+				local tabs = self.TabsPanel
 				
-				tabs_panel:DockMargin(width * 0.05, 0, 0, 0)
-				tabs_panel:SetWide(math.ceil(width * 0.4))
+				tabs:DockMargin(width * 0.05, 0, 0, 0)
+				tabs:SetWide(math.ceil(width * 0.4))
 			end
 			
 			do --tabs
-				local buttons = {}
-				local tabs_panel = vgui.Create("DPanel", bottom_panel)
-				bottom_panel.TabsPanel = tabs_panel
-				tabs_panel.Buttons = buttons
-				tabs_panel.Paint = nil
+				local tabs = vgui.Create("NecrosisTabs", bottom_panel)
+				bottom_panel.TabsPanel = tabs
 				
-				tabs_panel:Dock(LEFT)
+				tabs:Add("Play")
+				tabs:Add("Weapons")
+				tabs:Add("Operators")
+				tabs:Add("Settings")
+				tabs:Add("Store")
+				tabs:Dock(LEFT)
 				
-				function tabs_panel:PerformLayout(width)
-					local button_count = #buttons
-					local last_x = 0
-					
-					for index, button in ipairs(buttons) do
-						local next_x = math.Round(index / button_count * width)
-						
-						button:SetWide(next_x - last_x)
-						
-						last_x = next_x
-					end
-				end
+				function tabs:OnSelect(key) swapper:Show(key) end
 				
-				for index, key in ipairs{"Play", "Weapons", "Operators", "Settings", "Store"} do
-					local button = vgui.Create("DButton", tabs_panel)
-					buttons[index] = button
-					
-					button:Dock(LEFT)
-					button:SetContentAlignment(5)
-					button:SetIsToggle(true)
-					button:SetNecrosisFont("MainMenuTab")
-					button:SetText(string.upper(key))
-					
-					function button:DoClick()
-						button:Toggle()
-						swapper:Swap(key)
-						
-						--disable all other buttons
-						for index, sub_button in ipairs(buttons) do if sub_button ~= button then sub_button:SetToggle(false) end end
-					end
-					
-					function button:Paint(width, height)
-						if button:GetToggle() then
-							local stripe_height = math.ceil(height * 0.1)
-							
-							self:SetTextColor(color_pale_blue)
-							
-							--gradient
-							surface.SetDrawColor(color_pale_blue.r, color_pale_blue.g, color_pale_blue.b, 128)
-							surface.SetMaterial(material_gradient_up)
-							surface.DrawTexturedRect(0, 0, width, height)
-							
-							--stripe
-							surface.SetDrawColor(255, 255, 255)
-							surface.DrawRect(0, height - stripe_height, width, stripe_height)
-						elseif self.Hovered then
-							self:SetTextColor(color_white)
-							
-							--gradient
-							surface.SetDrawColor(255, 255, 255, 64)
-							surface.SetMaterial(material_gradient_up)
-							surface.DrawTexturedRect(0, 0, width, height)
-						else self:SetTextColor(color_gray) end
-					end
-				end
-				
-				buttons[1]:DoClick()
+				tabs:Choose(1)
 			end
 		end
 	end
 	
 	do --footer
-		local panel = vgui.Create("DPanel", self)
+		local panel = vgui.Create("Panel", self)
 		self.FooterPanel = panel
 		
 		panel:Dock(BOTTOM)
@@ -354,7 +303,7 @@ function PANEL:Init()
 	gui.HideGameUI()
 	hook.Add("OnScreenSizeChanged", self, self.FillScreen)
 	self:MakePopup()
-	self:DoModal()
+	--self:DoModal()
 	GAMEMODE:UIMainMenuEnable(self)
 end
 
@@ -434,27 +383,12 @@ function PANEL:PlayMusic(sound_path, fallback_url)
 				
 				stream:SetVolume(necrosis_music_volume:GetFloat())
 				stream:EnableLooping(true)
-			else steam:Stop() end
+			else stream:Stop() end
 		end
 	end
 	
 	if exists then sound.PlayFile(sound_path, "noblock", callback)
 	else sound.PlayURL(fallback_url, "noblock", callback) end
-end
-
-function PANEL:PlayMusic(sound_path, fallback_url)
-	local exists = file.Exists(sound_path, "GAME"); --we NEED the semicolon here
-	
-	(exists and sound.PlayFile or sound.PlayURL)(exists and sound_path or fallback_url, "noblock", function(stream, ...)
-		if stream and stream:IsValid() then
-			if self:IsValid() then
-				self.MusicStream = stream
-				
-				stream:SetVolume(necrosis_music_volume:GetFloat())
-				stream:EnableLooping(true)
-			else steam:Stop() end
-		end
-	end)
 end
 
 function PANEL:SetSkyBox(path)
