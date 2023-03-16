@@ -22,4 +22,4 @@ function PANEL:Paint(width, height)
 end
 
 --post
-derma.DefineControl("ZombinoSettingsMenuAudio", "", PANEL, "EditablePanel")
+derma.DefineControl("NecrosisSettingsMenuAudio", "", PANEL, "EditablePanel")

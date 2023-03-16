@@ -13,7 +13,7 @@ if not PYRITION then --Pyrition is required for this gamemode, so be as annoying
 	
 	give_me_pyrition()
 	
-	hook.Add("InitPostEntity", "Zombino", function()
+	hook.Add("InitPostEntity", "Necrosis", function()
 		give_me_pyrition()
 		timer.Simple(5, give_me_pyrition)
 	end)

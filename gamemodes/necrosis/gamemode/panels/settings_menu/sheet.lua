@@ -4,14 +4,14 @@ local PANEL = {}
 --panel functions
 function PANEL:Init()
 	do --binds
-		local page = vgui.Create("ZombinoSettingsMenuBinds", self)
+		local page = vgui.Create("NecrosisSettingsMenuBinds", self)
 		
 		page:Dock(FILL)
 		self:AddSheet("Bindings", page, "icon16/keyboard.png")
 	end
 	
 	do --audio
-		local page = vgui.Create("ZombinoSettingsMenuAudio", self)
+		local page = vgui.Create("NecrosisSettingsMenuAudio", self)
 		
 		page:Dock(FILL)
 		self:AddSheet("Audio", page, "icon16/sound.png")
@@ -33,4 +33,4 @@ function PANEL:Init()
 end
 
 --post
-derma.DefineControl("ZombinoSettingsMenuSheet", "", PANEL, "DPropertySheet")
+derma.DefineControl("NecrosisSettingsMenuSheet", "", PANEL, "DPropertySheet")

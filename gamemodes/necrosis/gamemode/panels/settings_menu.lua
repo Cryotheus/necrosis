@@ -13,7 +13,7 @@ function PANEL:Init()
 	self.btnMinim:SetVisible(false)
 	
 	do
-		local sheet = vgui.Create("ZombinoSettingsMenuSheet", self)
+		local sheet = vgui.Create("NecrosisSettingsMenuSheet", self)
 		self.Sheet = sheet
 		
 		sheet:Dock(FILL)
@@ -28,4 +28,4 @@ function PANEL:Resize()
 end
 
 --post
-derma.DefineControl("ZombinoSettingsMenu", "", PANEL, "DFrame")
+derma.DefineControl("NecrosisSettingsMenu", "", PANEL, "DFrame")

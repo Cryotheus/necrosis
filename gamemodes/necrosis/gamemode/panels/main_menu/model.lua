@@ -94,4 +94,4 @@ function PANEL:Paint(width, height)
 end
 
 --post
-derma.DefineControl("ZombinoMainMenuModel", "Graphic of the client's player model.", PANEL, "DButton")
+derma.DefineControl("NecrosisMainMenuModel", "Graphic of the client's player model.", PANEL, "DButton")

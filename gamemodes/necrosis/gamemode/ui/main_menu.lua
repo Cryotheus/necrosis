@@ -35,7 +35,7 @@ end
 function GM:NecrosisUIMainMenuOpen()
 	if self.UIMainMenuPanel then return end
 	
-	vgui.Create("ZombinoMainMenu")
+	vgui.Create("NecrosisMainMenu")
 end
 
 function GM:NecrosisUIMainMenuSetSkyMaterial(path)

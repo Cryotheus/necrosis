@@ -7,4 +7,4 @@ function PANEL:Init()
 end
 
 --post
-derma.DefineControl("ZombinoSettingsMenuBinds", "", PANEL, "EditablePanel")
+derma.DefineControl("NecrosisSettingsMenuBinds", "", PANEL, "EditablePanel")
