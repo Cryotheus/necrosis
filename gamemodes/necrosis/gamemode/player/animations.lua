@@ -42,6 +42,33 @@ function GM:CalcMainActivity(ply, velocity)
 	return ply.CalcIdeal, ply.CalcSeqOverride
 end
 
+function GM:DoAnimationEvent(ply, event, _data)
+	if event == PLAYERANIMEVENT_ATTACK_PRIMARY then
+		if ply:IsFlagSet(FL_ANIMDUCKING) then ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_ATTACK_CROUCH_PRIMARYFIRE, true)
+		else ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_ATTACK_STAND_PRIMARYFIRE, true) end
+
+		return ACT_VM_PRIMARYATTACK
+	elseif event == PLAYERANIMEVENT_ATTACK_SECONDARY then return ACT_VM_SECONDARYATTACK --there is no gesture, so just fire off the VM event
+	elseif event == PLAYERANIMEVENT_RELOAD then
+		if ply:IsFlagSet(FL_ANIMDUCKING) then ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_RELOAD_CROUCH, true)
+		else ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_RELOAD_STAND, true) end
+		
+		return ACT_INVALID
+	elseif event == PLAYERANIMEVENT_JUMP then
+		ply.m_bFirstJumpFrame = true
+		ply.m_bJumping = true
+		ply.m_flJumpStartTime = CurTime()
+		
+		ply:AnimRestartMainSequence()
+		
+		return ACT_INVALID
+	elseif event == PLAYERANIMEVENT_CANCEL_RELOAD then
+		ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
+		
+		return ACT_INVALID
+	end
+end
+
 function GM:GrabEarAnimation(ply)
 	ply.ChatGestureWeight = ply.ChatGestureWeight or 0
 	
@@ -251,32 +278,5 @@ function GM:UpdateAnimation(ply, velocity, sequence_speed)
 		
 		self:GrabEarAnimation(ply)
 		self:MouthMoveAnimation(ply)
-	end
-end
-
-function GM:DoAnimationEvent(ply, event, _data)
-	if event == PLAYERANIMEVENT_ATTACK_PRIMARY then
-		if ply:IsFlagSet(FL_ANIMDUCKING) then ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_ATTACK_CROUCH_PRIMARYFIRE, true)
-		else ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_ATTACK_STAND_PRIMARYFIRE, true) end
-
-		return ACT_VM_PRIMARYATTACK
-	elseif event == PLAYERANIMEVENT_ATTACK_SECONDARY then return ACT_VM_SECONDARYATTACK --there is no gesture, so just fire off the VM event
-	elseif event == PLAYERANIMEVENT_RELOAD then
-		if ply:IsFlagSet(FL_ANIMDUCKING) then ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_RELOAD_CROUCH, true)
-		else ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_MP_RELOAD_STAND, true) end
-		
-		return ACT_INVALID
-	elseif event == PLAYERANIMEVENT_JUMP then
-		ply.m_bFirstJumpFrame = true
-		ply.m_bJumping = true
-		ply.m_flJumpStartTime = CurTime()
-		
-		ply:AnimRestartMainSequence()
-		
-		return ACT_INVALID
-	elseif event == PLAYERANIMEVENT_CANCEL_RELOAD then
-		ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
-		
-		return ACT_INVALID
 	end
 end

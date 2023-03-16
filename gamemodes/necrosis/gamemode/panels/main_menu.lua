@@ -46,7 +46,9 @@ function PANEL:FillScreen()
 end
 
 function PANEL:Init()
+	local local_player = LocalPlayer()
 	local main_menu = self
+	local swapper
 	self.CameraAngle = Angle(0, 0, 0)
 	
 	do --emergency button for debug
@@ -78,6 +80,19 @@ function PANEL:Init()
 		model:SetZPos(-1)
 	end
 	
+	do --the stage
+		swapper = vgui.Create("NecrosisSwapPanel", self)
+		self.SwapperPanel = swapper
+		
+		swapper:Dock(FILL)
+		
+		do --settings
+			local settings = vgui.Create("NecrosisSettingsMenu", self)
+			
+			swapper:Add("Settings", settings)
+		end
+	end
+	
 	do --header
 		local panel = vgui.Create("DPanel", self)
 		panel.Paint = nil
@@ -104,10 +119,10 @@ function PANEL:Init()
 				local play_width, play_height = get_text_size(play_label)
 				local profile_panel = self.ProfilePanel
 				
-				play_label:DockMargin(0, height - play_height - 4, 0, 0)
+				play_label:DockMargin(0, height * 0.9 - play_height, 0, 0)
 				play_label:SetWide(play_width + width * 0.1)
 				
-				profile_panel:DockMargin(0, height * 0.4, 0, 0)
+				profile_panel:DockMargin(0, height * 0.4, width * 0.05, 0)
 				profile_panel:SetWide(width * 0.25)
 			end
 			
@@ -117,8 +132,8 @@ function PANEL:Init()
 				
 				label:Dock(LEFT)
 				label:SetContentAlignment(6)
-				label:SetFont("DermaLarge")
-				label:SetText(game.SinglePlayer() and "SINGLEPLAYER" or game.IsDedicated() and "MULTIPLAYER" or "PEER TO PEER")
+				label:SetNecrosisFont("MainMenuTitle")
+				label:SetText(game.SinglePlayer() and "SINGLEPLAYER" or game.IsDedicated() and "MULTIPLAYER" or "HOSTED MULTIPLAYER")
 				
 				function label:Paint(width, height)
 					local text_height = select(2, get_text_size(self))
@@ -137,7 +152,8 @@ function PANEL:Init()
 				profile_panel:Dock(RIGHT)
 				
 				function profile_panel:PerformLayout(_width, height)
-					profile_panel.AvatarPanel:SetWide(height)
+					self.AvatarPanel:SetWide(height)
+					self.LevelLabel:SetWide(height * 1.35)
 				end
 				
 				do --avatar
@@ -145,6 +161,13 @@ function PANEL:Init()
 					profile_panel.AvatarPanel = avatar
 					
 					avatar:Dock(LEFT)
+					
+					--wait until the player is valid to set the avatar
+					if local_player:IsValid() then avatar:SetPlayer(local_player, 184)
+					else hook.Add("InitPostEntity", avatar, function(self)
+						hook.Remove("InitPostEntity", self)
+						self:SetPlayer(LocalPlayer(), 184)
+					end) end
 				end
 				
 				do --level
@@ -153,7 +176,7 @@ function PANEL:Init()
 					
 					label:Dock(LEFT)
 					label:SetContentAlignment(5)
-					label:SetFont("DermaLarge")
+					label:SetNecrosisFont("MainMenuLevel")
 					label:SetText("24")
 				end
 				
@@ -164,17 +187,17 @@ function PANEL:Init()
 					
 					fill_panel:Dock(FILL)
 					
-					--function fill_panel:PerformLayout(width, height) end
+					function fill_panel:PerformLayout(_width, height) self.BarPanel:SetTall(height * 0.3) end
 					
 					do --name label
 						local label = vgui.Create("DLabel", fill_panel)
-						local ply = LocalPlayer()
 						fill_panel.NameLabel = label
 						
 						label:Dock(FILL)
+						label:SetNecrosisFont("MainMenuName")
 						
 						--set the label to their name or wait until the player is valid to do so
-						if ply:IsValid() then label:SetText(ply:Nick())
+						if local_player:IsValid() then label:SetText(local_player:Nick())
 						else hook.Add("InitPostEntity", label, function(self)
 							hook.Remove("InitPostEntity", self)
 							self:SetText(LocalPlayer():Nick())
@@ -209,7 +232,7 @@ function PANEL:Init()
 			function bottom_panel:PerformLayout(width)
 				local tabs_panel = self.TabsPanel
 				
-				tabs_panel:DockMargin(width * 0.1, 0, 0, 0)
+				tabs_panel:DockMargin(width * 0.05, 0, 0, 0)
 				tabs_panel:SetWide(math.ceil(width * 0.4))
 			end
 			
@@ -235,18 +258,19 @@ function PANEL:Init()
 					end
 				end
 				
-				for index, label in ipairs{"PLAY", "WEAPONS", "BARRACKS", "STORE"} do
+				for index, key in ipairs{"Play", "Weapons", "Operators", "Settings", "Store"} do
 					local button = vgui.Create("DButton", tabs_panel)
 					buttons[index] = button
 					
 					button:Dock(LEFT)
 					button:SetContentAlignment(5)
-					button:SetFont("HudHintTextLarge")
 					button:SetIsToggle(true)
-					button:SetText(label)
+					button:SetNecrosisFont("MainMenuTab")
+					button:SetText(string.upper(key))
 					
 					function button:DoClick()
 						button:Toggle()
+						swapper:Swap(key)
 						
 						--disable all other buttons
 						for index, sub_button in ipairs(buttons) do if sub_button ~= button then sub_button:SetToggle(false) end end
@@ -259,7 +283,7 @@ function PANEL:Init()
 							self:SetTextColor(color_pale_blue)
 							
 							--gradient
-							surface.SetDrawColor(color_pale_blue)
+							surface.SetDrawColor(color_pale_blue.r, color_pale_blue.g, color_pale_blue.b, 128)
 							surface.SetMaterial(material_gradient_up)
 							surface.DrawTexturedRect(0, 0, width, height)
 							
@@ -306,14 +330,15 @@ function PANEL:Init()
 			label:Dock(RIGHT)
 			label:DockMargin(0, 0, 1, 1)
 			label:SetContentAlignment(2)
-			label:SetFont("DermaDefaultBold")
+			label:SetNecrosisFont("MainMenuTab")
 			label:SetText("Necrosis v" .. GAMEMODE.Version)
 		end
 	end
 	
 	self:FillScreen()
 	self:PlayMusic("sound/necrosis/music/main_menu.mp3", "https://cdn.discordapp.com/attachments/652513124611522563/1085636070735102143/mainmenu.mp3")
-	self:SetSkyBox("skybox/sky_wasteland02")
+	self:SetSkyBox("skybox/sky_day03_06b") --skybox/sky_wasteland02
+	swapper:Swap("Play")
 	
 	cvars.AddChangeCallback("necrosis_music_volume", function() if self:IsValid() then self:MusicVolume(necrosis_music_volume:GetFloat()) end end, "NecrosisMainMenu")
 	gui.HideGameUI()
@@ -380,14 +405,13 @@ end
 
 function PANEL:PerformLayout(width, height)
 	local black_bar_height = math.ceil(height * 0.03)
-	local model = self.Model
-	local model_width, model_height = width * 0.4, height * 0.8
-	
-	model:SetPos((width - model_width) * 0.5, height - model_height)
-	model:SetSize(model_width, model_height)
+	local swapper_horizontal_margin = width * 0.06
+	local swapper_vertical_margin = height * 0.02
 	
 	self.FooterPanel:SetTall(black_bar_height * 2)
 	self.HeaderPanel:SetTall(black_bar_height * 4)
+	self.Model:SetSize(width, height)
+	self.SwapperPanel:DockMargin(swapper_horizontal_margin, swapper_vertical_margin, swapper_horizontal_margin, swapper_vertical_margin)
 end
 
 function PANEL:PlayMusic(sound_path, fallback_url)

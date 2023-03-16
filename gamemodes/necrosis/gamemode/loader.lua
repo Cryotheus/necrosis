@@ -47,6 +47,8 @@ local config = {
 				binds = "client",
 				sheet = "client",
 			},
+			
+			swap_panel = "client",
 		}
 	},
 	
@@ -66,6 +68,7 @@ local config = {
 		},
 		
 		ui = {
+			font = "client",
 			main_menu = "client",
 		},
 	},
