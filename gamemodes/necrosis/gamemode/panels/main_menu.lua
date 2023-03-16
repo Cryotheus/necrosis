@@ -1,5 +1,8 @@
 --locals
+local color_gray = Color(180, 180, 180)
+local color_pale_blue = Color(182, 202, 214)
 --local large_margin = 16
+local material_gradient_up = Material("gui/gradient_up")
 local PANEL = {}
 local sky_distance = 200
 local sky_quadrant_angles = {180, 180, 180, 180, 0, 0}
@@ -23,6 +26,13 @@ local sky_quadrant_positions = {
 	Vector(0, 0, sky_distance),
 	Vector(0, 0, -sky_distance)
 }
+
+--local function
+local function get_text_size(panel)
+	surface.SetFont(panel:GetFont())
+	
+	return surface.GetTextSize(panel:GetText())
+end
 
 --panel functions
 function PANEL:Close()
@@ -70,6 +80,7 @@ function PANEL:Init()
 	
 	do --header
 		local panel = vgui.Create("DPanel", self)
+		panel.Paint = nil
 		self.HeaderPanel = panel
 		
 		panel:Dock(TOP)
@@ -79,13 +90,195 @@ function PANEL:Init()
 			surface.DrawRect(0, 0, width, height)
 		end
 		
-		do --label
-			local label = vgui.Create("DLabel", panel)
-			panel.TitleLabel = label
+		function panel:PerformLayout(_width, height) self.BottomPanel:SetTall(height * 0.4) end
+		
+		do --top
+			local top_panel = vgui.Create("DPanel", panel)
+			top_panel.Paint = nil
+			panel.TopPanel = top_panel
 			
-			label:SetContentAlignment(5)
-			label:SetFont("DermaLarge")
-			label:SetText(game.SinglePlayer() and "SINGLEPLAYER" or game.IsDedicated() and "MULTIPLAYER" or "PEER TO PEER")
+			top_panel:Dock(FILL)
+			
+			function top_panel:PerformLayout(width, height)
+				local play_label = self.PlayLabel
+				local play_width, play_height = get_text_size(play_label)
+				local profile_panel = self.ProfilePanel
+				
+				play_label:DockMargin(0, height - play_height - 4, 0, 0)
+				play_label:SetWide(play_width + width * 0.1)
+				
+				profile_panel:DockMargin(0, height * 0.4, 0, 0)
+				profile_panel:SetWide(width * 0.25)
+			end
+			
+			do --play label
+				local label = vgui.Create("DLabel", top_panel)
+				top_panel.PlayLabel = label
+				
+				label:Dock(LEFT)
+				label:SetContentAlignment(6)
+				label:SetFont("DermaLarge")
+				label:SetText(game.SinglePlayer() and "SINGLEPLAYER" or game.IsDedicated() and "MULTIPLAYER" or "PEER TO PEER")
+				
+				function label:Paint(width, height)
+					local text_height = select(2, get_text_size(self))
+					local text_y = (height + text_height) * 0.5
+					
+					surface.SetDrawColor(192, 192, 192)
+					surface.DrawLine(0,  text_y, width, text_y)
+				end
+			end
+			
+			do --profile panel
+				local profile_panel = vgui.Create("DPanel", top_panel)
+				profile_panel.Paint = nil
+				top_panel.ProfilePanel = profile_panel
+				
+				profile_panel:Dock(RIGHT)
+				
+				function profile_panel:PerformLayout(_width, height)
+					profile_panel.AvatarPanel:SetWide(height)
+				end
+				
+				do --avatar
+					local avatar = vgui.Create("AvatarImage", profile_panel)
+					profile_panel.AvatarPanel = avatar
+					
+					avatar:Dock(LEFT)
+				end
+				
+				do --level
+					local label = vgui.Create("DLabel", profile_panel)
+					profile_panel.LevelLabel = label
+					
+					label:Dock(LEFT)
+					label:SetContentAlignment(5)
+					label:SetFont("DermaLarge")
+					label:SetText("24")
+				end
+				
+				do --progress bar and name
+					local fill_panel = vgui.Create("DPanel", profile_panel)
+					fill_panel.Paint = nil
+					profile_panel.FillPanel = fill_panel
+					
+					fill_panel:Dock(FILL)
+					
+					--function fill_panel:PerformLayout(width, height) end
+					
+					do --name label
+						local label = vgui.Create("DLabel", fill_panel)
+						local ply = LocalPlayer()
+						fill_panel.NameLabel = label
+						
+						label:Dock(FILL)
+						
+						--set the label to their name or wait until the player is valid to do so
+						if ply:IsValid() then label:SetText(ply:Nick())
+						else hook.Add("InitPostEntity", label, function(self)
+							hook.Remove("InitPostEntity", self)
+							self:SetText(LocalPlayer():Nick())
+						end) end
+					end
+					
+					do --level bar
+						local bar = vgui.Create("DPanel", fill_panel)
+						fill_panel.BarPanel = bar
+						
+						bar:Dock(BOTTOM)
+						
+						function bar:Paint(width, height)
+							surface.SetDrawColor(255, 255, 255, 64)
+							surface.DrawRect(0, 0, width, height)
+							
+							surface.SetDrawColor(255, 255, 255)
+							surface.DrawRect(0, 0, math.Remap(math.sin(CurTime()), -1, 1, 0, width), height)
+						end
+					end
+				end
+			end
+		end
+		
+		do --bottom
+			local bottom_panel = vgui.Create("DPanel", panel)
+			bottom_panel.Paint = nil
+			panel.BottomPanel = bottom_panel
+			
+			bottom_panel:Dock(BOTTOM)
+			
+			function bottom_panel:PerformLayout(width)
+				local tabs_panel = self.TabsPanel
+				
+				tabs_panel:DockMargin(width * 0.1, 0, 0, 0)
+				tabs_panel:SetWide(math.ceil(width * 0.4))
+			end
+			
+			do --tabs
+				local buttons = {}
+				local tabs_panel = vgui.Create("DPanel", bottom_panel)
+				bottom_panel.TabsPanel = tabs_panel
+				tabs_panel.Buttons = buttons
+				tabs_panel.Paint = nil
+				
+				tabs_panel:Dock(LEFT)
+				
+				function tabs_panel:PerformLayout(width)
+					local button_count = #buttons
+					local last_x = 0
+					
+					for index, button in ipairs(buttons) do
+						local next_x = math.Round(index / button_count * width)
+						
+						button:SetWide(next_x - last_x)
+						
+						last_x = next_x
+					end
+				end
+				
+				for index, label in ipairs{"PLAY", "WEAPONS", "BARRACKS", "STORE"} do
+					local button = vgui.Create("DButton", tabs_panel)
+					buttons[index] = button
+					
+					button:Dock(LEFT)
+					button:SetContentAlignment(5)
+					button:SetFont("HudHintTextLarge")
+					button:SetIsToggle(true)
+					button:SetText(label)
+					
+					function button:DoClick()
+						button:Toggle()
+						
+						--disable all other buttons
+						for index, sub_button in ipairs(buttons) do if sub_button ~= button then sub_button:SetToggle(false) end end
+					end
+					
+					function button:Paint(width, height)
+						if button:GetToggle() then
+							local stripe_height = math.ceil(height * 0.1)
+							
+							self:SetTextColor(color_pale_blue)
+							
+							--gradient
+							surface.SetDrawColor(color_pale_blue)
+							surface.SetMaterial(material_gradient_up)
+							surface.DrawTexturedRect(0, 0, width, height)
+							
+							--stripe
+							surface.SetDrawColor(255, 255, 255)
+							surface.DrawRect(0, height - stripe_height, width, stripe_height)
+						elseif self.Hovered then
+							self:SetTextColor(color_white)
+							
+							--gradient
+							surface.SetDrawColor(255, 255, 255, 64)
+							surface.SetMaterial(material_gradient_up)
+							surface.DrawTexturedRect(0, 0, width, height)
+						else self:SetTextColor(color_gray) end
+					end
+				end
+				
+				buttons[1]:DoClick()
+			end
 		end
 	end
 	
@@ -100,11 +293,19 @@ function PANEL:Init()
 			surface.DrawRect(0, 0, width, height)
 		end
 		
+		function panel:PerformLayout()
+			local version_label = self.VersionLabel
+			
+			version_label:SetWide(get_text_size(version_label))
+		end
+		
 		do --label
 			local label = vgui.Create("DLabel", panel)
 			panel.VersionLabel = label
 			
-			label:SetContentAlignment(5)
+			label:Dock(RIGHT)
+			label:DockMargin(0, 0, 1, 1)
+			label:SetContentAlignment(2)
 			label:SetFont("DermaDefaultBold")
 			label:SetText("Necrosis v" .. GAMEMODE.Version)
 		end
@@ -178,13 +379,15 @@ function PANEL:Paint()
 end
 
 function PANEL:PerformLayout(width, height)
+	local black_bar_height = math.ceil(height * 0.03)
 	local model = self.Model
 	local model_width, model_height = width * 0.4, height * 0.8
 	
 	model:SetPos((width - model_width) * 0.5, height - model_height)
 	model:SetSize(model_width, model_height)
 	
-	self.FooterPanel:SetTall(math.ceil(height * 0.03) * 2)
+	self.FooterPanel:SetTall(black_bar_height * 2)
+	self.HeaderPanel:SetTall(black_bar_height * 4)
 end
 
 function PANEL:PlayMusic(sound_path, fallback_url)
