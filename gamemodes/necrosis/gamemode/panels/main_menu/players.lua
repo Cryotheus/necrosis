@@ -43,4 +43,4 @@ function PANEL:Think()
 end
 
 --post
-derma.DefineControl("NecrosisMainMenuPlayers", "Panel with a NecrosisMainMenuPlayerList embeded.", PANEL, "DPanel")
+derma.DefineControl("NecrosisMainMenuPlayers", "Panel with a NecrosisMainMenuPlayerList embeded.", PANEL, "Panel")

@@ -2,7 +2,7 @@
 local PANEL = {}
 local sky_distance = 200
 local sky_quadrant_angles = {180, 180, 180, 180, 0, 0}
-local necrosis_music_volume = CreateConVar("necrosis_music_volume", "1.2", FCVAR_ARCHIVE, "Music volume", 0, 5)
+local necrosis_music_volume = CreateClientConVar("necrosis_music_volume", "1.2", true, false, "Music volume", 0, 5)
 
 --local tables
 local sky_quadrant_normals = {
@@ -258,7 +258,7 @@ function PANEL:Init()
 				tabs:Add("Store")
 				tabs:Dock(LEFT)
 				
-				function tabs:OnSelect(key) swapper:Show(key) end
+				function tabs:OnSelect(key) swapper:Swap(key) end
 				
 				tabs:Choose(1)
 			end
@@ -303,7 +303,7 @@ function PANEL:Init()
 	gui.HideGameUI()
 	hook.Add("OnScreenSizeChanged", self, self.FillScreen)
 	self:MakePopup()
-	--self:DoModal()
+	self:DoModal()
 	GAMEMODE:UIMainMenuEnable(self)
 end
 

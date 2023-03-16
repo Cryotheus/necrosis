@@ -109,4 +109,4 @@ function PANEL:Paint(width, height)
 end
 
 --post
-derma.DefineControl("NecrosisMainMenuModel", "Graphic of the client's player model.", PANEL, "DPanel")
+derma.DefineControl("NecrosisMainMenuModel", "Graphic of the client's player model.", PANEL, "Panel")

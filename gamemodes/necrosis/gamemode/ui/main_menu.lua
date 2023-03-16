@@ -49,9 +49,6 @@ function GM:NecrosisUIMainMenuSetSkyMaterial(path)
 	}
 end
 
---commands
-concommand.Add("necrosis_debug", function() GAMEMODE:UIMainMenuOpen() end) --TODO: remove debug
-
 --hooks
 hook.Add("Tick", "NecrosisUIMainMenu", function()
 	if not LocalPlayer():IsValid() then GAMEMODE:UIMainMenuOpen() end

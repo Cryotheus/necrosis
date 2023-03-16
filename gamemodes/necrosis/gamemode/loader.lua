@@ -38,6 +38,8 @@ local config = {
 	
 	{
 		panels = {
+			binder = "client",
+			
 			main_menu = {"client",
 				model = "client",
 				player = "client",
@@ -46,12 +48,13 @@ local config = {
 			},
 			
 			settings_menu = {"client",
-				audio = "client",
 				binds = "client",
-				sheet = "client",
+				general = "client",
 			},
 			
+			slider = "client",
 			swap_panel = "client",
+			tabs = "client",
 		}
 	},
 	
@@ -84,7 +87,7 @@ local branding = "Necrosis"
 local color = Color(255, 105, 12) --color representing your project
 local color_generic = Color(240, 240, 240) --most frequently used color
 local load_extensions = true
-local silent = false --disable console messages
+local silent = true --disable console messages
 
 do --do not touch
 	--locals

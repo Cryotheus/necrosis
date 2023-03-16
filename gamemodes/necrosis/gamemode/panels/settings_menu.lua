@@ -3,29 +3,62 @@ local PANEL = {}
 
 --panel functions
 function PANEL:Init()
-	self:Resize()
-	self:SetDraggable(true)
-	self:SetTitle("Settings")
+	local swapper
 	
-	hook.Add("OnScreenSizeChanged", self, self.Resize)
-	self:Center()
-	self.btnMaxim:SetVisible(false)
-	self.btnMinim:SetVisible(false)
-	
-	do
-		local sheet = vgui.Create("NecrosisSettingsMenuSheet", self)
-		self.Sheet = sheet
+	do --swapper
+		swapper = vgui.Create("NecrosisSwapPanel", self)
+		self.SwapPanel = swapper
 		
-		sheet:Dock(FILL)
+		swapper:Dock(FILL)
+		
+		function swapper:Paint(width, height)
+			surface.SetDrawColor(0, 0, 0, 192)
+			surface.DrawRect(0, 0, width, height)
+		end
+		
+		do --general
+			local general_panel = vgui.Create("NecrosisSettingsMenuGeneral", swapper)
+			swapper.GeneralPanel = general_panel
+			
+			swapper:Add("General", general_panel)
+		end
+		
+		do --controls
+			local binds_panel = vgui.Create("NecrosisSettingsMenuBinds", swapper)
+			swapper.BindsPanel = binds_panel
+			
+			swapper:Add("Controls", binds_panel)
+		end
+	end
+	
+	do --tabs
+		local tabs = vgui.Create("NecrosisTabs", self)
+		self.TabsPanel = tabs
+		
+		tabs:Add("General")
+		tabs:Add("Controls")
+		tabs:Add("Graphics")
+		tabs:Add("Credits")
+		tabs:Dock(TOP)
+		
+		function tabs:Paint(width, height)
+			surface.SetDrawColor(0, 0, 0, 192)
+			surface.DrawRect(0, 0, width, height)
+		end
+		
+		function tabs:OnSelect(key) swapper:Swap(key) end
+		
+		tabs:Choose(1)
 	end
 end
 
-function PANEL:Resize()
-	local width = ScrW()
+function PANEL:PerformLayout()
+	local tabs = self.TabsPanel
+	local tabs_height = ScrH() * 0.048
 	
-	self:SetPos(0, 0)
-	self:SetSize(width * 0.6, math.min(ScrH(), width * 0.35))
+	tabs:DockMargin(0, 0, 0, tabs_height * 0.1)
+	tabs:SetTall(tabs_height)
 end
 
 --post
-derma.DefineControl("NecrosisSettingsMenu", "", PANEL, "DFrame")
+derma.DefineControl("NecrosisSettingsMenu", "", PANEL, "Panel")
