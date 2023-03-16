@@ -39,6 +39,7 @@ local config = {
 	{
 		panels = {
 			binder = "client",
+			binder_labeled = "client",
 			
 			main_menu = {"client",
 				model = "client",
