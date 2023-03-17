@@ -22,6 +22,8 @@ function PANEL:Add(key, label)
 		
 		button:SetToggle(true)
 		indexing_parent:OnSelect(key, button)
+
+		if indexing_parent.OnSelectPost then indexing_parent:OnSelectPost(key, button) end
 		
 		--disable all other buttons
 		for index, sub_button in ipairs(buttons) do if sub_button ~= button then sub_button:SetToggle(false) end end
