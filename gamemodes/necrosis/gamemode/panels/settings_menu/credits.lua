@@ -39,13 +39,24 @@ function PANEL:Add(steam_id_64, name, title, description)
 	
 	do --name label
 		local label = vgui.Create("DLabel", panel)
+		local found_player
 		panel.NameLabel = label
 		
 		label:Dock(TOP)
 		label:SetAutoStretchVertical(true)
 		label:SetContentAlignment(4)
 		label:SetNecrosisFont("Regular")
-		label:SetText(name)
+		
+		--find the player if they are on the server
+		for index, ply in ipairs(player.GetAll()) do
+			if ply:SteamID64() == steam_id_64 then
+				found_player = ply
+				
+				break
+			end
+		end
+		
+		label:SetText(found_player and found_player:Nick() or name)
 	end
 	
 	do --title label
