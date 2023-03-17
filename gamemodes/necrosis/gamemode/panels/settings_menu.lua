@@ -29,6 +29,13 @@ function PANEL:Init()
 			
 			swapper:Add("Controls", binds_panel)
 		end
+		
+		do --credits
+			local credits_panel = vgui.Create("NecrosisSettingsMenuCredits", swapper)
+			swapper.CreditsPanel = credits_panel
+			
+			swapper:Add("Credits", credits_panel)
+		end
 	end
 	
 	do --tabs

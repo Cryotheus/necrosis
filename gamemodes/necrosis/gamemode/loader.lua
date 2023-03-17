@@ -49,7 +49,11 @@ local config = {
 				players = "client",
 			},
 			
+			material_design_icon = "client",
+			material_design_icon_button = "client",
+			
 			settings_menu = {"client",
+				credits = "client",
 				binds = "client",
 				general = "client",
 			},
@@ -80,6 +84,7 @@ local config = {
 		
 		ui = {
 			font = "client",
+			--icon = "client",
 			main_menu = "client",
 		},
 	},

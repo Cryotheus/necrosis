@@ -1,0 +1,48 @@
+--locals
+local PANEL = {}
+
+--accessor functions
+AccessorFunc(PANEL, "Color", "Color", FORCE_COLOR)
+
+--panel functions
+function PANEL:Init()
+	self:SetText("")
+	
+	self.GetText = self.GetTooltip
+	self.SetText = self.SetTooltip
+end
+
+function PANEL:PaintIcon(width, height)
+	--this will become the Paint function when the icon is set
+	if self.DetermineColor then surface.SetDrawColor(self:DetermineColor())
+	else surface.SetDrawColor(self.Color) end
+	
+	surface.SetMaterial(self.IconMaterial)
+	surface.DrawTexturedRectUV(0, 0, width, height, self.IconBeginU, self.IconBeginV, self.IconEndU, self.IconEndV)
+end
+
+function PANEL:PerformLayout(width, height)
+	if not self.IconName then return end
+	
+	local size = math.Round(math.log(math.max(width, height), 2))
+	size = math.min(math.Round(size * size), 512)
+	
+	if self.IconSize ~= size then
+		local material, x, y = PYRITION:GFXMaterialDesignGet(self.IconName, size)
+		
+		self.IconBeginU, self.IconBeginV = x / 512, y / 512
+		self.IconEndU, self.IconEndV = (x + size) / 512, (y + size) / 512
+		self.IconMaterial = material
+		self.IconSize = size
+		self.Paint = self.PaintIcon
+	end
+end
+
+function PANEL:SetIcon(icon_name)
+	self.IconName = icon_name
+	
+	self:InvalidateLayout(true)
+end
+
+--post
+derma.DefineControl("NecrosisMaterialDesignIcon", "An icon made with a material design icon vector graphic.", PANEL, "DButton")

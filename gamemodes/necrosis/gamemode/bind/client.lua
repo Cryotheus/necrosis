@@ -43,26 +43,20 @@ NECROSIS.Binds = NECROSIS.Binds or {}
 function GM:BindLoad()
 	local binds_file = file.Open("necrosis/binds.dat", "rb", "DATA")
 	
-	print("binds_file", binds_file)
-	
 	if not binds_file then return end
 	
 	local binds = NECROSIS.Binds
 	
-	print("emptying binds", binds)
 	table.Empty(binds)
 	
 	repeat
 		local code = binds_file:ReadByte()
 		local command = read_file_string(binds_file)
 		
-		print("read", code, command)
-		
 		binds[code] = command
 		binds[command] = code
 	until binds_file:EndOfFile()
 	
-	print("done!")
 	binds_file:Close()
 end
 
@@ -71,7 +65,7 @@ function GM:BindOverride(code, command)
 	
 	local existing = NECROSIS.Binds[code]
 	
-	if existing then NECROSIS.Binds[existing] = nil end
+	if existing then self:BindRestore(command) end
 	
 	NECROSIS.Binds[code] = command
 	NECROSIS.Binds[command] = code
