@@ -139,7 +139,7 @@ function PANEL:Init()
 				profile_panel:DockMargin(0, height * 0.4, width * 0.05, 0)
 				profile_panel:SetWide(width * 0.25)
 				
-				self.MoneyPanel:DockMargin(0, height * 0.4, 0, 0)
+				self.MoneyPanel:DockMargin(0, height * 0.4, height * 0.15, 0)
 			end
 			
 			do --play label
@@ -245,18 +245,18 @@ function PANEL:Init()
 					local money_label = self.Label
 					local money_width = money_label:GetTextSize()
 					
-					money_label:DockMargin(0, 0, 0, 0)
-					money_label:SetWide(money_width * 1.1)
-					self:SizeToChildren(true)
+					money_label:SetWide(math.max(height, money_width))
 					self.Icon:SetWide(height)
+					
+					self:SizeToChildren(true)
 				end
 				
 				do --icon
-					local icon = vgui.Create("NecrosisMaterialDesignIcon", money_sizer)
+					local icon = vgui.Create("NecrosisMaterialDesignIconScaler", money_sizer)
 					money_sizer.Icon = icon
 					
 					icon:Dock(LEFT)
-					icon:SetIcon("cash_multiple")
+					icon:SetIcon("bank-circle-outline")
 				end
 				
 				do --label
@@ -264,9 +264,9 @@ function PANEL:Init()
 					money_sizer.Label = label
 					
 					label:Dock(LEFT)
-					label:SetNecrosisFont("Regular")
+					label:SetNecrosisFont("Big")
 					label:SetContentAlignment(5)
-					label:SetText("2800")
+					label:SetText("$999,999,999")
 				end
 			end
 		end

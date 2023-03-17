@@ -17,8 +17,7 @@ end
 function PANEL:PerformLayout(width, height)
 	if not self.IconName then return end
 	
-	local size = math.Round(math.log(math.max(width, height), 2))
-	size = math.min(math.Round(size * size), 512)
+	local size = 2 ^ math.Round(math.log(math.max(width, height), 2))
 	
 	if self.IconUpdated or self.IconSize ~= size then
 		local material, x, y = PYRITION:GFXMaterialDesignGet(self.IconName, size)

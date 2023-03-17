@@ -52,6 +52,7 @@ local config = {
 			material_design = {
 				icon = "client",
 				icon_button = "client",
+				icon_scaler = "client",
 				icon_volume = "client",
 			},
 			
