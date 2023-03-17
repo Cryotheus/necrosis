@@ -81,7 +81,10 @@ function PANEL:Init()
 			
 			swapper:Add("Play", panel)
 			
-			function panel:PerformLayout(width) self.PlayerInfoPanel:SetWide(width * 0.2) end
+			function panel:PerformLayout(width, height)
+				self.GamePanel:SetWide(math.min(height * 0.4, width * 0.5))
+				self.PlayerInfoPanel:SetWide(math.min(height * 0.3, width * 0.35))
+			end
 			
 			do --player info
 				local player_info = vgui.Create("NecrosisMainMenuPlayers", panel)
@@ -91,8 +94,10 @@ function PANEL:Init()
 			end
 			
 			do --game panel
-				local game_panel = vgui.Create("EditablePanel", panel)
+				local game_panel = vgui.Create("NecrosisMainMenuGame", panel)
 				panel.GamePanel = game_panel
+				
+				game_panel:Dock(RIGHT)
 			end
 		end
 		
@@ -143,7 +148,7 @@ function PANEL:Init()
 				
 				label:Dock(LEFT)
 				label:SetContentAlignment(6)
-				label:SetNecrosisFont("MainMenuTitle")
+				label:SetNecrosisFont("Huge")
 				label:SetText(game.SinglePlayer() and "SINGLEPLAYER" or game.IsDedicated() and "MULTIPLAYER" or "HOSTED MULTIPLAYER")
 				
 				function label:Paint(width, height)
@@ -187,7 +192,7 @@ function PANEL:Init()
 					
 					label:Dock(LEFT)
 					label:SetContentAlignment(5)
-					label:SetNecrosisFont("MainMenuLevel")
+					label:SetNecrosisFont("Big")
 					label:SetText("24")
 				end
 				
@@ -205,7 +210,7 @@ function PANEL:Init()
 						fill_panel.NameLabel = label
 						
 						label:Dock(FILL)
-						label:SetNecrosisFont("MainMenuName")
+						label:SetNecrosisFont("Regular")
 						
 						--set the label to their name or wait until the player is valid to do so
 						if local_player:IsValid() then label:SetText(local_player:Nick())
@@ -289,7 +294,7 @@ function PANEL:Init()
 			label:Dock(RIGHT)
 			label:DockMargin(0, 0, 1, 1)
 			label:SetContentAlignment(2)
-			label:SetNecrosisFont("MainMenuInfo")
+			label:SetNecrosisFont("Tiny")
 			label:SetText("Necrosis v" .. GAMEMODE.Version)
 		end
 	end

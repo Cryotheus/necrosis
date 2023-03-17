@@ -14,7 +14,7 @@ function PANEL:Add(key, label)
 	button:Dock(LEFT)
 	button:SetContentAlignment(5)
 	button:SetIsToggle(true)
-	button:SetNecrosisFont("MainMenuTab")
+	button:SetNecrosisFont("Medium")
 	button:SetText(label or string.upper(key))
 	
 	function button:DoClick()

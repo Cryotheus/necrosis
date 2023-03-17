@@ -9,7 +9,7 @@ function PANEL:Init()
 		local label = vgui.Create("DLabel", self)
 		
 		label:Dock(TOP)
-		label:SetNecrosisFont("SettingsHeader")
+		label:SetNecrosisFont("Small")
 		label:SetText("Music Volume")
 		
 		local slider = vgui.Create("NecrosisSlider", self)

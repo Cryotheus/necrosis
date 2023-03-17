@@ -58,7 +58,7 @@ function PANEL:PerformLayout()
 	local tabs_height = ScrH() * 0.048
 	
 	self.SwapPanel:DockPadding(padding, padding, padding, padding)
-	tabs:DockMargin(0, 0, 0, tabs_height * 0.1)
+	tabs:DockMargin(0, 0, 0, tabs_height * 0.2)
 	tabs:SetTall(tabs_height)
 end
 

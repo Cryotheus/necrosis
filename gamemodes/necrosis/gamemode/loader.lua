@@ -42,6 +42,7 @@ local config = {
 			binder_labeled = "client",
 			
 			main_menu = {"client",
+				game = "client",
 				model = "client",
 				player = "client",
 				player_list = "client",
@@ -62,6 +63,7 @@ local config = {
 	{
 		bind = {
 			client = true,
+			server = true,
 		},
 		
 		player = {
@@ -73,6 +75,8 @@ local config = {
 			spectator = "shared",
 			survivor = "shared",
 		},
+		
+		team = "shared",
 		
 		ui = {
 			font = "client",

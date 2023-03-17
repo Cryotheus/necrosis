@@ -9,8 +9,9 @@ function PANEL:Init()
 		self.HeaderLabel = label
 		
 		label:Dock(TOP)
-		label:SetContentAlignment(4)
+		label:SetContentAlignment(6)
 		label:SetNecrosisFont("Tiny")
+		label:SetText("Game")
 		label:SetTextColor(color_gray)
 		
 		function label:Paint(width, height)
@@ -19,11 +20,8 @@ function PANEL:Init()
 		end
 	end
 	
-	do --player list
-		local player_list = vgui.Create("NecrosisMainMenuPlayerList", self)
-		self.PlayerList = player_list
+	do
 		
-		player_list:Dock(FILL)
 	end
 end
 
@@ -35,12 +33,5 @@ function PANEL:PerformLayout()
 	header_label:SetTall(text_height * 1.1)
 end
 
-function PANEL:Think()
-	local header_label = self.HeaderLabel
-	local text = " Players " .. player.GetCount() .. " /" .. game.MaxPlayers() .. " Max"
-	
-	if header_label:GetText() ~= text then header_label:SetText(text) end
-end
-
 --post
-derma.DefineControl("NecrosisMainMenuPlayers", "Panel with a NecrosisMainMenuPlayerList embeded.", PANEL, "Panel")
+derma.DefineControl("NecrosisMainMenuGame", "Panel with details about the current game.", PANEL, "Panel")

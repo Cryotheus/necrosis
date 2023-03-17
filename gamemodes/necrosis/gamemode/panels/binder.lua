@@ -2,8 +2,13 @@
 local PANEL = {}
 
 --panel functions
+function PANEL:DoRightClick()
+	GAMEMODE:BindRestore(self.Command)
+	self:SetSelectedNumber(0)
+end
+
 function PANEL:Init() self:SetTextColor(Color(210, 210, 210, 255)) end
-function PANEL:OnChange(code) GAMEMODE:PlayerBind(code, self.Command) end
+function PANEL:OnChange(code) if code ~= 0 then GAMEMODE:BindOverride(code, self.Command) end end
 
 function PANEL:Paint(width, height)
 	surface.SetDrawColor(0, 0, 0, 128)

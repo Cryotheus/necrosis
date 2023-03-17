@@ -1,5 +1,6 @@
 --locals
 local PANEL = {}
+local panel_meta = FindMetaTable("Panel")
 
 --panel functions
 function PANEL:GetFont() return self.Label:GetFont() end
@@ -7,11 +8,15 @@ function PANEL:GetText() return self.Label:GetText() end
 function PANEL:GetTextSize() return self.Label:GetTextSize() end
 
 function PANEL:Init()
+	panel_meta.SetText(self, "") --clear the text on this panel
+	self:SetMouseInputEnabled(true)
+	
 	do --label
 		local label = vgui.Create("DLabel", self)
 		self.Label = label
 		
 		label:Dock(FILL)
+		label:SetMouseInputEnabled(false)
 	end
 	
 	do --binder
@@ -41,4 +46,4 @@ function PANEL:SetTextColor(color) self.Label:SetTextColor(color) end
 function PANEL:SetTextStyleColor(color) self.Label:SetTextStyleColor(color) end
 
 --post
-derma.DefineControl("NecrosisBinderLabeled", "", PANEL, "EditablePanel")
+derma.DefineControl("NecrosisBinderLabeled", "", PANEL, "DLabel")

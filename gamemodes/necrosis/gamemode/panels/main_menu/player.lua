@@ -28,7 +28,7 @@ function PANEL:Init()
 		
 		label:Dock(FILL)
 		label:SetContentAlignment(4)
-		label:SetNecrosisFont("MainMenuName")
+		label:SetNecrosisFont("Regular")
 	end
 end
 
