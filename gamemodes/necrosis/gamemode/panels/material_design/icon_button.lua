@@ -6,6 +6,7 @@ AccessorFunc(PANEL, "Color", "Color", FORCE_COLOR)
 
 --panel functions
 function PANEL:Init()
+	self:SetColor(Color(255, 255, 255))
 	self:SetText("")
 	
 	self.GetText = self.GetTooltip

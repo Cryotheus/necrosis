@@ -138,6 +138,8 @@ function PANEL:Init()
 				
 				profile_panel:DockMargin(0, height * 0.4, width * 0.05, 0)
 				profile_panel:SetWide(width * 0.25)
+				
+				self.MoneyPanel:DockMargin(0, height * 0.4, 0, 0)
 			end
 			
 			do --play label
@@ -262,7 +264,7 @@ function PANEL:Init()
 					money_sizer.Label = label
 					
 					label:Dock(LEFT)
-					label:NecrosisSetFont("Regular")
+					label:SetNecrosisFont("Regular")
 					label:SetContentAlignment(5)
 					label:SetText("2800")
 				end
