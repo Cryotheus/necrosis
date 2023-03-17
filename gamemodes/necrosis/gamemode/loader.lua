@@ -49,8 +49,11 @@ local config = {
 				players = "client",
 			},
 			
-			material_design_icon = "client",
-			material_design_icon_button = "client",
+			material_design = {
+				icon = "client",
+				icon_button = "client",
+				icon_volume = "client",
+			},
 			
 			settings_menu = {"client",
 				credits = "client",

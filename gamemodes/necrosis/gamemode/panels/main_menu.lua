@@ -111,7 +111,6 @@ function PANEL:Init()
 	
 	do --header
 		local panel = vgui.Create("Panel", self)
-		--panel.Paint = nil
 		self.HeaderPanel = panel
 		
 		panel:Dock(TOP)
@@ -125,7 +124,6 @@ function PANEL:Init()
 		
 		do --top
 			local top_panel = vgui.Create("Panel", panel)
-			--top_panel.Paint = nil
 			panel.TopPanel = top_panel
 			
 			top_panel:Dock(FILL)
@@ -162,7 +160,6 @@ function PANEL:Init()
 			
 			do --profile panel
 				local profile_panel = vgui.Create("Panel", top_panel)
-				--profile_panel.Paint = nil
 				top_panel.ProfilePanel = profile_panel
 				
 				profile_panel:Dock(RIGHT)
@@ -198,7 +195,6 @@ function PANEL:Init()
 				
 				do --progress bar and name
 					local fill_panel = vgui.Create("Panel", profile_panel)
-					--fill_panel.Paint = nil
 					profile_panel.FillPanel = fill_panel
 					
 					fill_panel:Dock(FILL)
@@ -236,11 +232,45 @@ function PANEL:Init()
 					end
 				end
 			end
+			
+			do --money
+				local money_sizer = vgui.Create("DSizeToContents", top_panel)
+				top_panel.MoneyPanel = money_sizer
+				
+				money_sizer:Dock(RIGHT)
+				
+				function money_sizer:PerformLayout(_width, height)
+					local money_label = self.Label
+					local money_width = money_label:GetTextSize()
+					
+					money_label:DockMargin(0, 0, 0, 0)
+					money_label:SetWide(money_width * 1.1)
+					self:SizeToChildren(true)
+					self.Icon:SetWide(height)
+				end
+				
+				do --icon
+					local icon = vgui.Create("NecrosisMaterialDesignIcon", money_sizer)
+					money_sizer.Icon = icon
+					
+					icon:Dock(LEFT)
+					icon:SetIcon("cash_multiple")
+				end
+				
+				do --label
+					local label = vgui.Create("DLabel", money_sizer)
+					money_sizer.Label = label
+					
+					label:Dock(LEFT)
+					label:NecrosisSetFont("Regular")
+					label:SetContentAlignment(5)
+					label:SetText("2800")
+				end
+			end
 		end
 		
 		do --bottom
 			local bottom_panel = vgui.Create("Panel", panel)
-			--bottom_panel.Paint = nil
 			panel.BottomPanel = bottom_panel
 			
 			bottom_panel:Dock(BOTTOM)
