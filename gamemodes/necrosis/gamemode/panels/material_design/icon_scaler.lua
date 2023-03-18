@@ -23,7 +23,7 @@ function PANEL:PerformLayout(width, height)
 	local icon_panel = self.IconPanel
 	local icon_scale = self.IconScale
 	local icon_size = icon_scale and icon_scale * math.max(width, height) or self.IconSize
-	
+
 	icon_panel:SetSize(icon_size, icon_size)
 	icon_panel:SetPos((width - icon_size) * self.IconX, (height - icon_size) * self.IconY)
 end
@@ -32,7 +32,7 @@ function PANEL:SetIcon(icon_name) self.IconPanel:SetIcon(icon_name) end
 
 function PANEL:SetIconDock(dock)
 	local pair = dock_presets[dock]
-	
+
 	self:SetIconFraction(pair[1], pair[2])
 end
 

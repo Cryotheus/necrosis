@@ -8,7 +8,7 @@ AccessorFunc(PANEL, "Color", "Color", FORCE_COLOR)
 function PANEL:Init()
 	self:SetColor(Color(255, 255, 255))
 	self:SetText("")
-	
+
 	self.GetText = self.GetTooltip
 	self.SetText = self.SetTooltip
 end
@@ -22,13 +22,13 @@ end
 
 function PANEL:PerformLayout(width, height)
 	if not self.IconName then return end
-	
+
 	local size = math.Round(math.log(math.max(width, height), 2))
 	size = math.min(math.Round(size * size), 512)
-	
+
 	if self.IconUpdated or self.IconSize ~= size then
 		local material, x, y = PYRITION:GFXMaterialDesignGet(self.IconName, size)
-		
+
 		self.IconBeginU, self.IconBeginV = x / 512, y / 512
 		self.IconEndU, self.IconEndV = (x + size) / 512, (y + size) / 512
 		self.IconMaterial = material
@@ -44,10 +44,10 @@ function PANEL:SetIcon(icon_name)
 		self.IconSize = nil
 		self.Paint = nil
 	end
-	
+
 	self.IconName = icon_name
 	self.IconUpdated = true
-	
+
 	self:InvalidateLayout(true)
 end
 

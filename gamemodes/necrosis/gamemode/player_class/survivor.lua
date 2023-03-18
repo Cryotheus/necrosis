@@ -40,7 +40,7 @@ function PLAYER:PreDrawViewModel(_view_model, _weapon) end
 function PLAYER:SetModel()
 	local ply = self.Player
 	local player_model = player_manager.TranslatePlayerModel(ply:GetInfo("cl_playermodel"))
-	
+
 	util.PrecacheModel(player_model)
 	ply:SetModel(player_model)
 end
@@ -50,7 +50,7 @@ function PLAYER:ShouldDrawLocal() end
 
 function PLAYER:Spawn()
 	local ply = self.Player
-	
+
 	ply:SetupHands()
 	ply:SetViewOffset(Vector(0, 0, 64))
 	ply:SetViewOffsetDucked(Vector(0, 0, 28))

@@ -10,26 +10,26 @@ function PANEL:GetTextSize() return self.Label:GetTextSize() end
 function PANEL:Init()
 	panel_meta.SetText(self, "") --clear the text on this panel
 	self:SetMouseInputEnabled(true)
-	
+
 	do --label
 		local label = vgui.Create("DLabel", self)
 		self.Label = label
-		
+
 		label:Dock(FILL)
 		label:SetMouseInputEnabled(false)
 	end
-	
+
 	do --binder
 		local binder = vgui.Create("NecrosisBinder", self)
 		self.Binder = binder
-		
+
 		binder:Dock(RIGHT)
 	end
 end
 
 function PANEL:PerformLayout(width)
 	local margin = math.ceil(ScrH() * 0.005)
-	
+
 	self.Binder:SetWide(math.ceil(width * 0.5) - margin)
 	self.Label:DockMargin(0, 0, margin, 0)
 end

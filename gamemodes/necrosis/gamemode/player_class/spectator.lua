@@ -34,7 +34,7 @@ function PLAYER:PreDrawViewModel(_view_model, _weapon) end
 function PLAYER:SetModel()
 	local ply = self.Player
 	local player_model = "models/dav0r/camera.mdl"
-	
+
 	util.PrecacheModel(player_model)
 	ply:SetModel(player_model)
 end
@@ -44,7 +44,7 @@ function PLAYER:ShouldDrawLocal() end
 
 function PLAYER:Spawn()
 	local ply = self.Player
-	
+
 	ply:SetViewOffset(vector_origin)
 	ply:SetViewOffsetDucked(vector_origin)
 end

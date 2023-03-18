@@ -12,17 +12,17 @@ NECROSIS.UIFontRegistry = NECROSIS.UIFontRegistry or {}
 --local functions
 local function create_font(font, size)
 	local key = "Necrosis_" .. font .. "_" .. size
-	
+
 	if NECROSIS.UIFontRegistry[key] then return key end
-	
+
 	NECROSIS.UIFontRegistry[key] = true
-	
+
 	surface.CreateFont(key, {
 		font = font,
 		extended = true,
 		size = size,
 	})
-	
+
 	return key
 end
 
@@ -33,7 +33,7 @@ function panel_meta:SetNecrosisFont(key) self:SetFont(GAMEMODE:UIFontAddPanel(se
 function GM:UIFontAddPanel(panel, key)
 	local font_panels = NECROSIS.UIFontPanels
 	local count = panel_count + 1
-	
+
 	--remove all invalid panels every 10 panels added
 	if count - last_check >= check_interval then
 		for panel, key in pairs(font_panels) do
@@ -42,13 +42,13 @@ function GM:UIFontAddPanel(panel, key)
 				font_panels[panel] = nil
 			end
 		end
-		
+
 		last_check = count
 	end
-	
+
 	panel_count = count
 	font_panels[panel] = key
-	
+
 	return NECROSIS.UIFonts[key].Name
 end
 
@@ -56,10 +56,10 @@ function GM:OnScreenSizeChanged(_old_width, _old_height)
 	local fonts = NECROSIS.UIFonts
 	local multiplier = ScrH() / 1440
 	local panels = NECROSIS.UIFontPanels
-	
+
 	--update the fonts, and then the panels
 	for key, details in pairs(fonts) do details.Name = create_font(details.Font, math.max(math.Round(details.Size * multiplier), 6)) end
-	
+
 	for panel, key in pairs(panels) do
 		--panels start acting weird when the become null
 		if panel:IsValid() then panel:SetFont(fonts[key].Name)
