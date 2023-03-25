@@ -40,6 +40,7 @@ local config = {
 		panels = {
 			binder = "client",
 			binder_labeled = "client",
+			column_sizer = "client",
 
 			main_menu = {"client",
 				game = "client",
@@ -53,6 +54,7 @@ local config = {
 				icon = "client",
 				icon_button = "client",
 				icon_scaler = "client",
+				icon_scaler_button = "client",
 				icon_volume = "client",
 			},
 
@@ -77,6 +79,7 @@ local config = {
 		player = {
 			server = true,
 			shared = true,
+			sprint = "shared",
 		},
 
 		player_class = {

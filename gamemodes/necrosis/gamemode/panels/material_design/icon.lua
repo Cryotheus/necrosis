@@ -5,7 +5,10 @@ local PANEL = {IconUpdated = false}
 AccessorFunc(PANEL, "Color", "Color", FORCE_COLOR)
 
 --panel functions
-function PANEL:Init() self:SetColor(Color(255, 255, 255)) end
+function PANEL:Init()
+	self:SetColor(Color(255, 255, 255))
+	self:SetMouseInputEnabled(false)
+end
 
 function PANEL:PaintIcon(width, height)
 	--this will become the Paint function when the icon is set

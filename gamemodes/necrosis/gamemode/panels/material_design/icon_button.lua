@@ -1,6 +1,14 @@
 --locals
 local PANEL = {IconUpdated = false}
 
+--local tables
+local colors = {
+	Color(96, 96, 96),
+	Color(160, 160, 160),
+	Color(208, 208, 208),
+	Color(255, 255, 255)
+}
+
 --accessor functions
 AccessorFunc(PANEL, "Color", "Color", FORCE_COLOR)
 
@@ -10,6 +18,7 @@ function PANEL:Init()
 	self:SetText("")
 
 	self.GetText = self.GetTooltip
+	self.Paint = self.UpdateIconColor
 	self.SetText = self.SetTooltip
 end
 
@@ -49,6 +58,20 @@ function PANEL:SetIcon(icon_name)
 	self.IconUpdated = true
 
 	self:InvalidateLayout(true)
+end
+
+function PANEL:UpdateIconColor()
+	local color_index = 2
+
+	if self.Depressed or self:IsSelected() or self:GetToggle() then color_index = 4
+	elseif self:GetDisabled() then color_index = 1
+	elseif self.Hovered then color_index = 3 end
+
+	if self.ColorIndex ~= color_index then
+		self.ColorIndex = color_index
+
+		self:SetColor(colors[color_index])
+	end
 end
 
 --post

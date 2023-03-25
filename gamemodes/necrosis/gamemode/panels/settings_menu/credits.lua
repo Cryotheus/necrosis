@@ -7,11 +7,6 @@ function PANEL:Add(steam_id_64, name, title, description)
 
 	panel:Dock(TOP)
 
-	function PANEL:Paint(width, height)
-		surface.SetDrawColor(0, 0, 0, 192)
-		surface.DrawRect(0, 0, width, height)
-	end
-
 	function panel:PerformLayout(width, height)
 		local avatar_size = math.max(math.ceil(width * 0.05), 96)
 		local description_label = self.DescriptionLabel
