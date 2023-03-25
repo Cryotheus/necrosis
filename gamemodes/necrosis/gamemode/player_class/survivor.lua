@@ -47,16 +47,34 @@ function PLAYER:SetModel()
 	ply:SetModel(player_model)
 end
 
-function PLAYER:SetupDataTables() end
+function PLAYER:SetupDataTables()
+	local ply = self.Player
+
+	--ply:NetworkVar("Float", 0, "NecrosisSprintStamina")
+	--ply:NetworkVar("Float", 1, "NecrosisSprintStart")
+	--ply:NetworkVar("Float", 2, "NecrosisSprintRecover")
+
+	--ply:NetworkVar("Bool", 0, "NecrosisSprinting")
+	--ply:NetworkVar("Bool", 1, "NecrosisSprintDisabled")
+end
+
 function PLAYER:ShouldDrawLocal() end
 
 function PLAYER:Spawn()
+	local maximum_stamina = self.NecrosisMaximumStamina
 	local ply = self.Player
-	ply.NecrosisMaximumStamina = self.NecrosisMaximumStamina
+	ply.NecrosisMaximumStamina = maximum_stamina
 
 	ply:SetupHands()
 	ply:SetViewOffset(Vector(0, 0, 64))
 	ply:SetViewOffsetDucked(Vector(0, 0, 28))
+
+	--network vars defaults
+	--ply:SetNecrosisSprintStamina(maximum_stamina)
+	--ply:SetNecrosisSprintStart(0)
+	--ply:SetNecrosisSprintRecover(0)
+	--ply:SetNecrosisSprinting(false)
+	--ply:SetNecrosisSprintDisabled(false)
 end
 
 function PLAYER:StartMove(_command, _move) end
