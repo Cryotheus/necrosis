@@ -4,7 +4,7 @@
 NECROSIS.ConVarMirrors = NECROSIS.ConVarMirrors or {}
 
 --gamemode functions
-function GAMEMODE:ConVarMirror(convar)
+function GM:ConVarMirror(convar)
 	if isstring(convar) then convar = GetConVar(convar) end
 	if not convar then return end
 
@@ -20,7 +20,7 @@ function GAMEMODE:ConVarMirror(convar)
 	cvars.AddChangeCallback(name, function() mirror_convar:SetString(convar:GetString()) end, "NecrosisConVarMirror")
 end
 
-function GAMEMODE:ShutDown()
+function GM:ShutDown()
 	--restore all overridden convars
 	for convar_name, mirror in pairs(NECROSIS.ConVarMirrors) do RunConsoleCommand(convar_name, mirror:GetString()) end
 end
