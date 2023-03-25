@@ -2,8 +2,12 @@
 function GM:PlayerInitialSpawn(ply) self:PlayerSpawnAsSpectator(ply) end
 
 function GM:PlayerSpawn(ply, _transition)
+	ply.NecrosisMaximumStamina = 4
+
 	player_manager.OnPlayerSpawn(ply, transiton)
 	player_manager.RunClass(ply, "Spawn")
+
+	ply.NecrosisStamina = ply.NecrosisMaximumStamina
 
 	if not transiton then hook.Run("PlayerLoadout", ply) end
 
@@ -11,10 +15,7 @@ function GM:PlayerSpawn(ply, _transition)
 	ply:SetMoveType(ply:Team() == TEAM_SURVIVOR and MOVETYPE_WALK or MOVETYPE_NOCLIP)
 end
 
-function GM:PlayerSpawnWave(ply)
-	if ply:Team() == TEAM_SPECTATOR then self:PlayerSpawnAsSurvivor() end
-end
-
+function GM:PlayerSpawnWave(ply) if ply:Team() == TEAM_SPECTATOR then self:PlayerSpawnAsSurvivor() end end
 function GM:PlayerUse(ply, _entity) return ply:Team() == TEAM_SURVIVOR end
 
 function GM:NecrosisPlayerSpawnAsSpectator(ply, respawn)

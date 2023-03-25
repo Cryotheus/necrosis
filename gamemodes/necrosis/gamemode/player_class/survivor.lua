@@ -9,6 +9,7 @@ local PLAYER = {
 	JumpPower = 200, --how powerful our jump should be
 	MaxArmor = 0, --max armor we can have
 	MaxHealth = 100, --max health we can have
+	NecrosisMaximumStamina = 4, --maximum stamina
 	RunSpeed = 320, --how fast to move when running
 	SlowWalkSpeed = 100, --how fast to move when slow-walking (+walk)
 	StartArmor = 0, --how much armour we start with
@@ -26,6 +27,7 @@ function PLAYER:Death(_inflictor, _attacker) end
 function PLAYER:FinishMove(_move) end
 function PLAYER:GetHandsModel() return player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(self.Player:GetModel())) end
 function PLAYER:Init() end
+
 function PLAYER:Loadout()
 	local ply = self.Player
 
@@ -50,6 +52,7 @@ function PLAYER:ShouldDrawLocal() end
 
 function PLAYER:Spawn()
 	local ply = self.Player
+	ply.NecrosisMaximumStamina = self.NecrosisMaximumStamina
 
 	ply:SetupHands()
 	ply:SetViewOffset(Vector(0, 0, 64))
