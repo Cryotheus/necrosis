@@ -113,8 +113,6 @@ function GM:BindSave()
 	binds_file:Close()
 end
 
-function GM:Initialize() self:BindLoad() end
-
 function GM:PlayerBindPress(_ply, bind, pressed, code)
 	local method = bind_hooks[bind]
 	local rebind = NECROSIS.Binds[code]

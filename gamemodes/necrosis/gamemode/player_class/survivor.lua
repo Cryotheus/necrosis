@@ -2,7 +2,7 @@
 local PLAYER = {
 	AvoidPlayers = true, --automatically swerves around other players
 	CanUseFlashlight = true, --can we use the flashlight
-	CrouchedWalkSpeed = 0.4, --multiply move speed by this when crouching
+	CrouchedWalkSpeed = 0.6, --multiply move speed by this when crouching
 	DisplayName = "Survivor",
 	DropWeaponOnDie = false, --do we drop our weapon when we die
 	DuckSpeed = 0.1, --how fast to go from not ducking, to ducking

@@ -32,11 +32,18 @@ local config = {
 			shared = true,
 		},
 
+		initialize = "download",
 		loader = "download",
-		shared = "download",
 	},
 
 	{
+		difficulties = {
+			easy = "shared",
+			hard = "shared",
+			nightmare = "shared",
+			normal = "shared",
+		},
+
 		panels = {
 			binder = "client",
 			binder_labeled = "client",
@@ -44,6 +51,7 @@ local config = {
 
 			main_menu = {"client",
 				game = "client",
+				game_difficulty = "client",
 				model = "client",
 				player = "client",
 				player_list = "client",
@@ -67,7 +75,7 @@ local config = {
 			slider = "client",
 			swap_panel = "client",
 			tabs = "client",
-		}
+		},
 	},
 
 	{
@@ -76,10 +84,23 @@ local config = {
 			server = true,
 		},
 
+		client = {true,
+			convar = "client",
+		},
+
+		difficulty = {
+			server = true,
+			shared = true,
+		},
+
 		player = {
+			client = true,
+			flip = "client",
+			meta = "shared",
 			server = true,
 			shared = true,
 			sprint = "shared",
+			team = "shared",
 		},
 
 		player_class = {
@@ -87,7 +108,8 @@ local config = {
 			survivor = "shared",
 		},
 
-		team = "shared",
+		server = true,
+		shared = true,
 
 		ui = {
 			font = "client",
@@ -120,7 +142,12 @@ do --do not touch
 	--local functions
 	local function build_list(include_list, prefix, tree) --recursively explores to build load order
 		for name, object in pairs(tree) do
-			local trimmed_path = name == 1 and string.sub(prefix, 1, -2) or prefix .. name
+			local trimmed_path
+
+			if name == 1 then
+				name = select(3, string.find(prefix, "[/]*([^/]-)/?$"))
+				trimmed_path = string.sub(prefix, 1, -2)
+			else trimmed_path = prefix .. name end
 
 			if istable(object) then build_list(include_list, trimmed_path .. "/", object)
 			elseif object then
