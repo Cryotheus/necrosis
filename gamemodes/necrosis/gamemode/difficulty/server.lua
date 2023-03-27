@@ -86,7 +86,7 @@ concommand.Add("~necrosis_vote_difficulty", function(ply, _command, arguments)
 end, nil, language.GetPhrase("necrosis.internal_command"))
 
 --hooks
-hook.Add("PyritionNetPlayerInitialized", function(ply)
+hook.Add("PyritionNetPlayerInitialized", "NecrosisDifficulty", function(ply)
 	net.Start("NecrosisDifficultyVote")
 
 	for index, difficulty in ipairs(GAMEMODE.DifficultyList) do

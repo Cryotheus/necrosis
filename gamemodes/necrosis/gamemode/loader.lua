@@ -117,6 +117,8 @@ local config = {
 			--icon = "client",
 			main_menu = "client",
 		},
+
+		wikify = "shared developer",
 	},
 
 	--only exception to the rule above, as this should be the last script to load

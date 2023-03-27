@@ -1,8 +1,6 @@
 --locals
 local PANEL = {Paint = false}
 
---globals
-
 --panel function
 function PANEL:Init()
 	local indexing_parent = self
@@ -84,7 +82,7 @@ function PANEL:Init()
 		description_label:SetWrap(true)
 	end
 
-	hook.Add("NecrosisDifficultyVoteCountChanged", self)
+	hook.Add("NecrosisDifficultyVoteCountChanged", self, self.UpdateCounts)
 end
 
 function PANEL:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
@@ -136,6 +134,8 @@ function PANEL:Think()
 	if index == nil then index = self.DifficultyIndex end
 	if index ~= self.VisibleDifficultyIndex then self:SetVisibleDifficulty(index) end
 end
+
+function PANEL:UpdateCounts() end
 
 --post
 derma.DefineControl("NecrosisMainMenuGameDifficulty", "Panel with details about the current game's difficulty.", PANEL, "DSizeToContents")
