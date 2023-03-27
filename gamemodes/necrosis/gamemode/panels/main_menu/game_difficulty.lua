@@ -19,6 +19,7 @@ function PANEL:Init()
 	end
 
 	do --difficulty options
+		local chosen_difficulty = GAMEMODE.DifficultyVoted
 		local panel = vgui.Create("NecrosisColumnSizer", self)
 		self.DifficultyPanel = panel
 
@@ -46,7 +47,13 @@ function PANEL:Init()
 					else for index, button in ipairs(difficulty_buttons) do button:SetToggle(button == self) end end
 
 					indexing_parent:SetDifficulty(index)
-					RunConsoleCommand("necrosis_vote_difficulty", index)
+					GAMEMODE:DifficultyVote(index)
+				end
+
+				if chosen_difficulty == difficulty_table.Class then
+					self.DifficultyIndex = index
+
+					icon_button:SetToggle(true)
 				end
 			end
 		end
@@ -76,7 +83,11 @@ function PANEL:Init()
 		description_label:SetVisible(false)
 		description_label:SetWrap(true)
 	end
+
+	hook.Add("NecrosisDifficultyVoteCountChanged", self)
 end
+
+function PANEL:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
 
 function PANEL:PerformLayout()
 	--more?

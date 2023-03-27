@@ -22,10 +22,15 @@ function PANEL:Init()
 		scroller:Dock(FILL)
 	end
 
-	hook.Add("OnEntityCreated", self, function(self, entity) if entity:IsPlayer() then self:AddPlayer(entity) end end)
 	hook.Add("EntityRemoved", self, function(self, entity) if entity:IsPlayer() then self:RemovePlayer(entity) end end)
+	hook.Add("OnEntityCreated", self, function(self, entity) if entity:IsPlayer() then self:AddPlayer(entity) end end)
 
 	for index, ply in ipairs(player.GetAll()) do self:AddPlayer(ply) end
+end
+
+function PANEL:OnRemove()
+	hook.Remove("EntityRemoved", self)
+	hook.Remove("OnEntityCreated", self)
 end
 
 function PANEL:PerformLayout(width)

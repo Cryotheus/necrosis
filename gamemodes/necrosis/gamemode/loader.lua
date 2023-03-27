@@ -89,6 +89,7 @@ local config = {
 		},
 
 		difficulty = {
+			client = true,
 			server = true,
 			shared = true,
 		},

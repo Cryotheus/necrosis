@@ -356,6 +356,7 @@ function PANEL:OnRemove()
 	if IsValid(stream) then stream:Stop() end
 
 	GAMEMODE:UIMainMenuDisable()
+	hook.Remove("OnScreenSizeChanged", self)
 end
 
 function PANEL:Paint()

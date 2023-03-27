@@ -6,6 +6,8 @@ GM.DifficultyRegistry = {}
 function GM:DifficultyGet(class_or_index) return self.DifficultyList[class_or_index] end
 
 function GM:NecrosisDifficultyRegistration(registering)
+	---This hook is called by NecrosisDifficultyStartRegistration to register the difficulties.
+	---Make sure you do not return anything that might stop the hook.
 	local difficulty_list = self.DifficultyList
 
 	table.Empty(difficulty_list)
@@ -25,6 +27,7 @@ function GM:NecrosisDifficultyRegistration(registering)
 end
 
 function GM:NecrosisDifficultyStartRegistration()
+	---This hook is called before the difficulties are registered.
 	local registry = self.DifficultyRegistry
 
 	table.Empty(registry)
