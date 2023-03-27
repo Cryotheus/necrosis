@@ -11,7 +11,7 @@ function PANEL:Init()
 		label:Dock(TOP)
 		label:SetContentAlignment(6)
 		label:SetNecrosisFont("Tiny")
-		label:SetText("Game")
+		label:SetText("#necrosis.panels.main_menu_game.header")
 		label:SetTextColor(color_gray)
 
 		function label:Paint(width, height)

@@ -15,7 +15,7 @@ function PANEL:Init()
 		label:SetAutoStretchVertical(true)
 		label:SetContentAlignment(5)
 		label:SetNecrosisFont("Medium")
-		label:SetText("DIFFICULTY")
+		label:SetText("#necrosis.panels.main_menu_game_difficulty.header")
 	end
 
 	do --difficulty options

@@ -10,7 +10,7 @@ function PANEL:Init()
 
 		label:Dock(TOP)
 		label:SetNecrosisFont("Small")
-		label:SetText("Music Volume")
+		label:SetText("#necrosis.panels.settings_menu_general.music_volume")
 
 		local slider = vgui.Create("NecrosisSlider", self)
 

@@ -8,7 +8,7 @@ function PANEL:DoClick()
 
 	--TODO: play sound here (start binding)
 	input.StartKeyTrapping()
-	self:SetText("PRESS A KEY")
+	self:SetText("#necrosis.panels.binder.trapping")
 end
 
 function PANEL:DoRightClick()
@@ -65,7 +65,7 @@ function PANEL:UpdateText()
 	local translated
 
 	if name then translated = language.GetPhrase(name)
-	else return self:SetText("NONE") end
+	else return self:SetText("#necrosis.panels.binder.unbound") end
 
 	if translated ~= name then self:SetText(translated)
 	else self:SetText(string.upper(name)) end
