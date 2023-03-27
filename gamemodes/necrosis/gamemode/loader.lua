@@ -94,6 +94,17 @@ local config = {
 			shared = true,
 		},
 
+		game = {
+			client = true,
+			server = true,
+			server_hooks = "server",
+
+			timer = {
+				client = true,
+				server = true,
+			},
+		},
+
 		player = {
 			client = true,
 			flip = "client",
@@ -116,6 +127,10 @@ local config = {
 			font = "client",
 			--icon = "client",
 			main_menu = "client",
+		},
+
+		wave = {
+
 		},
 
 		wikify = "shared developer",

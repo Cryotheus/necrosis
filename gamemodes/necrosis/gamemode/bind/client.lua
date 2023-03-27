@@ -85,7 +85,7 @@ function GM:BindQueueSave()
 end
 
 function GM:BindRestore(command)
-	code = NECROSIS.Binds[command]
+	local code = NECROSIS.Binds[command]
 
 	--swap if we have the wrong order
 	if isnumber(command) then command, code = code, command end

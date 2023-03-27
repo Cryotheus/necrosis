@@ -38,17 +38,6 @@ function GM:NecrosisUIMainMenuOpen()
 	vgui.Create("NecrosisMainMenu")
 end
 
-function GM:NecrosisUIMainMenuSetSkyMaterial(path)
-	sky_materials = {
-		Material(path .. "ft"),
-		Material(path .. "bk"),
-		Material(path .. "lf"),
-		Material(path .. "rt"),
-		Material(path .. "up"),
-		Material(path .. "dn"), nil --the nil is here to overwrite the second return of Material
-	}
-end
-
 --hooks
 hook.Add("Tick", "NecrosisUIMainMenu", function()
 	if not LocalPlayer():IsValid() then GAMEMODE:UIMainMenuOpen() end

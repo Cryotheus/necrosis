@@ -25,6 +25,33 @@ function GM:DoPlayerDeath(ply, _attacker, _damage_info)
 	ragdoll:SetNWEntity("NecrosisOwner", ply)
 end
 
+function GM:NecrosisPlayerSpawnAsSpectator(ply, respawn, team_index)
+	player_manager.SetPlayerClass(ply, "player_spectator")
+	ply:RemoveAllItems()
+	ply:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
+	ply:SetTeam(team_index or TEAM_SPECTATOR)
+	ply:Spectate(OBS_MODE_ROAMING)
+
+	if respawn then ply:Spawn() end
+end
+
+function GM:NecrosisPlayerSpawnAsSurvivor(ply, respawn, team_index)
+	player_manager.SetPlayerClass(ply, "player_survivor")
+	ply:UnSpectate()
+	ply:SetCollisionGroup(COLLISION_GROUP_PLAYER)
+	ply:SetTeam(team_index or TEAM_SURVIVOR)
+
+	if respawn then ply:Spawn() end
+end
+
+function GM:NecrosisPlayerSpawnWaiting()
+	---Spawns in all players who are dropping in.
+	for index, ply in ipairs(player.GetAll()) do
+		--spawn in only the players who want to
+		if ply:NecrosisDroppingIn() then self:NecrosisPlayerSpawnAsSurvivor(ply, true) end
+	end
+end
+
 function GM:PlayerDeath(ply, inflictor, attacker)
 	--this is the same as the base gamemode but without the unnecessary stuff
 	if IsValid(attacker) and attacker:GetClass() == "trigger_hurt" then attacker = ply end
@@ -67,7 +94,7 @@ function GM:PlayerDeath(ply, inflictor, attacker)
 end
 
 function GM:PlayerDeathThink(ply)
-	self:PlayerSpawnAsSpectator(ply, true)
+	self:PlayerSpawnAsSpectator(ply, true, TEAM_WAITING)
 
 	local ply_pos = ply:GetPos()
 	local record
@@ -95,20 +122,6 @@ function GM:PlayerInitialSpawn(ply)
 	self:PlayersPlayingList(false, true)
 end
 
-function GM:PlayerSpawn(ply, _transition)
-	ply.NecrosisMaximumStamina = 4
-
-	player_manager.OnPlayerSpawn(ply, transiton)
-	player_manager.RunClass(ply, "Spawn")
-
-	ply.NecrosisStamina = ply.NecrosisMaximumStamina
-
-	if not transiton then hook.Run("PlayerLoadout", ply) end
-
-	hook.Run("PlayerSetModel", ply)
-	ply:SetMoveType(ply:NecrosisPlaying() and MOVETYPE_WALK or MOVETYPE_NOCLIP)
-end
-
 function GM:PlayersPlayingList(copy, forced)
 	local tick = engine.TickCount()
 
@@ -124,36 +137,18 @@ function GM:PlayersPlayingList(copy, forced)
 	return playing_players
 end
 
+function GM:PlayerSpawn(ply, _transition)
+	ply.NecrosisMaximumStamina = 4
+
+	player_manager.OnPlayerSpawn(ply, transiton)
+	player_manager.RunClass(ply, "Spawn")
+
+	ply.NecrosisStamina = ply.NecrosisMaximumStamina
+
+	if not transiton then hook.Run("PlayerLoadout", ply) end
+
+	hook.Run("PlayerSetModel", ply)
+	ply:SetMoveType(ply:NecrosisPlaying() and MOVETYPE_WALK or MOVETYPE_NOCLIP)
+end
+
 function GM:PlayerUse(ply, _entity) return ply:NecrosisPlaying() end
-
-function GM:NecrosisPlayerSpawnAsSpectator(ply, respawn)
-	player_manager.SetPlayerClass(ply, "player_spectator")
-	ply:RemoveAllItems()
-	ply:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
-	ply:SetTeam(TEAM_SPECTATOR)
-	ply:Spectate(OBS_MODE_ROAMING)
-
-	if respawn then ply:Spawn() end
-end
-
-function GM:NecrosisPlayerSpawnAsSurvivor(ply, respawn)
-	player_manager.SetPlayerClass(ply, "player_survivor")
-	ply:UnSpectate()
-	ply:SetCollisionGroup(COLLISION_GROUP_PLAYER)
-	ply:SetTeam(TEAM_SURVIVOR)
-
-	if respawn then ply:Spawn() end
-end
-
---commands
-concommand.Add("necrosis_dropin", function(ply)
-	if not ply:IsValid() then return end
-
-	GAMEMODE:PlayerSpawnAsSurvivor(ply, true)
-end)
-
-concommand.Add("necrosis_spectate", function(ply)
-	if not ply:IsValid() then return end
-
-	GAMEMODE:PlayerSpawnAsSpectator(ply, true)
-end)

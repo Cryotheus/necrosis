@@ -1,5 +1,5 @@
 --local functions
-function get_ragdoll_color(self)
+local function get_ragdoll_color(self)
 	local owner = self:GetNWEntity("NecrosisOwner", NULL)
 
 	return owner:IsValid() and owner:GetPlayerColor() or nil
