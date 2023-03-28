@@ -133,6 +133,10 @@ local config = {
 			server = true,
 		},
 
+		weapon = {
+			shared = true,
+		},
+
 		wikify = "shared developer",
 	},
 
