@@ -77,8 +77,8 @@ end
 
 --commands
 concommand.Add("~necrosis_vote_difficulty", function(ply, _command, arguments)
-	if GAMEMODE.DifficultyActive then return print("gm active") end
-	if not ply:IsValid() then return print("ply valid") end
+	if GAMEMODE.DifficultyActive then return end
+	if not ply:IsValid() then return end
 
 	local difficulty = GAMEMODE:DifficultyGet(tonumber(arguments[1]))
 

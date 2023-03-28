@@ -130,7 +130,7 @@ local config = {
 		},
 
 		wave = {
-
+			server = true,
 		},
 
 		wikify = "shared developer",

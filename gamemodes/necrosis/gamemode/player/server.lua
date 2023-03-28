@@ -48,7 +48,7 @@ function GM:NecrosisPlayerSpawnWaiting()
 	---Spawns in all players who are dropping in.
 	for index, ply in ipairs(player.GetAll()) do
 		--spawn in only the players who want to
-		if ply:NecrosisDroppingIn() then self:NecrosisPlayerSpawnAsSurvivor(ply, true) end
+		if ply:NecrosisDroppingIn() then self:PlayerSpawnAsSurvivor(ply, true) end
 	end
 end
 
@@ -122,21 +122,6 @@ function GM:PlayerInitialSpawn(ply)
 	self:PlayersPlayingList(false, true)
 end
 
-function GM:PlayersPlayingList(copy, forced)
-	local tick = engine.TickCount()
-
-	if playing_players_updated ~= tick or forced then
-		playing_players_updated = tick
-
-		for index in ipairs(playing_players) do playing_players[index] = nil end
-		for index, ply in pairs(player.GetAll()) do if ply:NecrosisPlaying() then table.insert(playing_players) end end
-	end
-
-	if copy then return table.Copy(playing_players) end
-
-	return playing_players
-end
-
 function GM:PlayerSpawn(ply, _transition)
 	ply.NecrosisMaximumStamina = 4
 
@@ -149,6 +134,21 @@ function GM:PlayerSpawn(ply, _transition)
 
 	hook.Run("PlayerSetModel", ply)
 	ply:SetMoveType(ply:NecrosisPlaying() and MOVETYPE_WALK or MOVETYPE_NOCLIP)
+end
+
+function GM:PlayersPlayingList(copy, forced)
+	local tick = engine.TickCount()
+
+	if playing_players_updated ~= tick or forced then
+		playing_players_updated = tick
+
+		for index in ipairs(playing_players) do playing_players[index] = nil end
+		for index, ply in pairs(player.GetAll()) do if ply:NecrosisPlaying() then table.insert(playing_players, ply) end end
+	end
+
+	if copy then return table.Copy(playing_players) end
+
+	return playing_players
 end
 
 function GM:PlayerUse(ply, _entity) return ply:NecrosisPlaying() end

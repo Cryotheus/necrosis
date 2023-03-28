@@ -1,4 +1,3 @@
-SetGlobal2Bool("NecrosisGameTimerActive", false)
 SetGlobal2Float("NecrosisGameTimer", 0)
 
 --locals
@@ -6,6 +5,7 @@ local start_time = 0
 local target_time = 0
 
 --gamemode functions
+function GM:GameTimerActive() return target_time ~= 0 end
 function GM:GameTimerIncreaseTo(delay) return self:GameTimerSet(math.min(CurTime() + delay, target_time)) end
 function GM:GameTimerIncrement(amount) return self:GameTimerSet(math.max(target_time - amount, start_time)) end
 function GM:GameTimerReduceTo(delay) return self:GameTimerSet(math.min(CurTime() + delay, target_time)) end
@@ -19,19 +19,18 @@ function GM:GameTimerSet(target)
 end
 
 function GM:GameTimerStart(delay)
-	if not self.NecrosisGameTimerElapsed then self.NecrosisGameTimerElapsed = self.GameTimerStop end
+	if not self.GameTimerElapsed then self.GameTimerElapsed = self.GameTimerStop end
 
 	start_time = CurTime()
 	target_time = start_time + delay
 
-	SetGlobal2Bool("NecrosisGameTimerActive", true)
 	SetGlobal2Float("NecrosisGameTimer", target_time)
 end
 
 function GM:GameTimerStop()
-	self.NecrosisGameTimerElapsed = nil
+	self.GameTimerElapsed = nil
+	target_time = 0
 
-	SetGlobal2Bool("NecrosisGameTimerActive", false)
 	SetGlobal2Float("NecrosisGameTimer", 0)
 end
 

@@ -1,4 +1,4 @@
-SetGlobalBool("NecrosisGameActive", false)
+SetGlobal2Bool("NecrosisGameActive", false)
 
 --locals
 local first_wave_delay = 10
@@ -21,13 +21,22 @@ local function count_ready()
 end
 
 --gamemode functions
+function GM:GameCheckLoss()
+	---Initiate a game over if there are no survivors left.
+	for index, ply in ipairs(player.GetAll()) do if ply:NecrosisPlaying() then return end end
+
+	self:GameLose()
+end
+
 function GM:NecrosisGameDropIn(ply)
 	---Called when a player attempts to drop in.
 	if ply:NecrosisPlaying() then return end
-	if GetGlobal2Bool("NecrosisWaveActive") then ply:SetTeam(TEAM_WAITING)
+	if GetGlobal2Bool("NecrosisWaveActive") or not GetGlobal2Bool("NecrosisGameActive") then ply:SetTeam(TEAM_WAITING)
 	else self:PlayerSpawnAsSurvivor(ply, true, self.GameEvent and TEAM_SURVIVOR_EVENT) end
 	
 	self:GameDroppedIn(ply)
+
+	if GetGlobal2Bool("NecrosisWaveActive") then return end
 
 	local count, total = count_ready()
 
@@ -36,9 +45,9 @@ function GM:NecrosisGameDropIn(ply)
 
 		self:GameTimerStart(total == 1 and start_minimum_delay or start_delay)
 		
-		function self:NecrosisGameTimerElapsed() self:GameStart() end
+		function self:GameTimerElapsed() self:GameStart() end
 	else
-		start_progression = math.max(start_progression, count / total)
+		start_progression = math.max(start_progression or 0, count / total)
 
 		self:GameTimerReduceTo(math.max((1 - start_progression) * start_delay, start_minimum_delay))
 	end
@@ -52,7 +61,8 @@ function GM:NecrosisGameDropOut(ply)
 
 	self:GameDroppedOut(ply)
 
-	if count_ready() == 0 then
+	if GetGlobal2Bool("NecrosisWaveActive") then self:GameCheckLoss()
+	elseif count_ready() == 0 then
 		start_progression = nil
 
 		self:GameTimerStop(start_delay)
@@ -75,8 +85,11 @@ end
 function GM:NecrosisGameStart()
 	---Called to start the game.
 	SetGlobalBool("NecrosisGameActive", true)
-
-	function self:NecrosisGameTimerElapsed() self:WaveStart(1) end
+	
+	function self:GameTimerElapsed()
+		self:WaveStart(1)
+		self:GameTimerStop()
+	end
 	
 	self:GameTimerStart(first_wave_delay)
 	self:PlayerSpawnWaiting()
@@ -91,7 +104,7 @@ end
 
 function GM:Think()
 	--run the timer think only if we have one
-	if GetGlobal2Bool("NecrosisGameTimerActive") then self:GameTimerThink() end
+	if self:GameTimerActive() then self:GameTimerThink() end
 end
 
 --commands
