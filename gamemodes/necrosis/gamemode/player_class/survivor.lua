@@ -9,6 +9,8 @@ local PLAYER = {
 	JumpPower = 200, --how powerful our jump should be
 	MaxArmor = 0, --max armor we can have
 	MaxHealth = 100, --max health we can have
+	NecrosisKickDelay = 0.5, --how long until the kick hits
+	NecrosisKickReset = 0.5, --how long until the kick resets (this is how long after the kick lands until we can kick again)
 	NecrosisMaximumStamina = 4, --maximum stamina
 	RunSpeed = 320, --how fast to move when running
 	SlowWalkSpeed = 100, --how fast to move when slow-walking (+walk)
@@ -26,6 +28,13 @@ function PLAYER:CreateMove(_command) end
 function PLAYER:Death(_inflictor, _attacker) end
 function PLAYER:FinishMove(_move) end
 function PLAYER:GetHandsModel() return player_manager.TranslatePlayerHands(player_manager.TranslateToPlayerModelName(self.Player:GetModel())) end
+
+function PLAYER:GetNetworkField(key, type_field)
+	local ply = self.Player
+
+	return ply[key] or ply["GetNW" .. type_field](ply, key, self[key])
+end
+
 function PLAYER:Init() end
 
 function PLAYER:Loadout()
@@ -36,6 +45,15 @@ function PLAYER:Loadout()
 end
 
 function PLAYER:Move(_move) end
+
+function PLAYER:SetNetworkField(key, field_type)
+	local ply = self.Player
+	local value = self[key]
+
+	ply[key] = value
+	ply["SetNW" .. field_type](ply, key, value)
+end
+
 function PLAYER:PostDrawViewModel(_view_model, _weapon) end
 function PLAYER:PreDrawViewModel(_view_model, _weapon) end
 
@@ -53,24 +71,33 @@ function PLAYER:SetupDataTables()
 	--ply:NetworkVar("Float", 0, "NecrosisSprintStamina")
 	--ply:NetworkVar("Float", 1, "NecrosisSprintStart")
 	--ply:NetworkVar("Float", 2, "NecrosisSprintRecover")
+	ply:NetworkVar("Float", 3, "NecrosisKick")
 
 	--ply:NetworkVar("Bool", 0, "NecrosisSprinting")
 	--ply:NetworkVar("Bool", 1, "NecrosisSprintDisabled")
+	ply:NetworkVar("Bool", 2, "NecrosisKicking")
+	ply:NetworkVar("Bool", 3, "NecrosisKickBlocked")
+	ply:NetworkVar("Bool", 4, "NecrosisKickAttacked")
+
+	if SERVER then return end
+
+	ply:NetworkVarNotify("NecrosisKick", function(entity, _name, _old, new) GAMEMODE:PlayerKickNotfiy(entity, new) end)
 end
 
 function PLAYER:ShouldDrawLocal() end
 
 function PLAYER:Spawn()
-	local maximum_stamina = self.NecrosisMaximumStamina
 	local ply = self.Player
-	ply.NecrosisMaximumStamina = maximum_stamina
 
 	ply:SetupHands()
 	ply:SetViewOffset(Vector(0, 0, 64))
 	ply:SetViewOffsetDucked(Vector(0, 0, 28))
+	self:SetNetworkField("NecrosisKickDelay", "2Float")
+	self:SetNetworkField("NecrosisKickReset", "2Float")
+	self:SetNetworkField("NecrosisMaximumStamina", "2Float")
 
 	--network vars defaults
-	--ply:SetNecrosisSprintStamina(maximum_stamina)
+	--ply:SetNecrosisSprintStamina(self.NecrosisMaximumStamina)
 	--ply:SetNecrosisSprintStart(0)
 	--ply:SetNecrosisSprintRecover(0)
 	--ply:SetNecrosisSprinting(false)

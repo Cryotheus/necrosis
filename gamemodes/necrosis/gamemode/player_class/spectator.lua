@@ -32,11 +32,10 @@ function PLAYER:PostDrawViewModel(_view_model, _weapon) end
 function PLAYER:PreDrawViewModel(_view_model, _weapon) end
 
 function PLAYER:SetModel()
-	local ply = self.Player
 	local player_model = "models/dav0r/camera.mdl"
 
 	util.PrecacheModel(player_model)
-	ply:SetModel(player_model)
+	self.Player:SetModel(player_model)
 end
 
 function PLAYER:SetupDataTables() end

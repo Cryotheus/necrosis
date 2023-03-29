@@ -109,6 +109,13 @@ local config = {
 		player = {
 			client = true,
 			flip = "client",
+
+			kick = {
+				client = true,
+				shared = true,
+				server = true,
+			},
+
 			meta = "shared",
 			server = true,
 			shared = true,

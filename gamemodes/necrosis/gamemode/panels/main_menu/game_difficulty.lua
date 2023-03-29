@@ -40,8 +40,6 @@ function PANEL:Init()
 		function panel:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
 
 		function panel:UpdateCounts(votes)
-			print("hi!", votes)
-			PrintTable(votes)
 			for class, vote_count in pairs(votes) do
 				local button = difficulty_buttons[class]
 

@@ -59,7 +59,7 @@ function PANEL:Init()
 				sizer.KickBinderPanel = binder
 
 				binder:Dock(TOP)
-				binder:SetCommand("necrosis_kick")
+				binder:SetCommand("+necrosis_kick")
 				binder:SetHeight(120)
 				binder:SetNecrosisFont("Small")
 				binder:SetText("#necrosis.panels.settings_menu_binds.binder.kick")
