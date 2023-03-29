@@ -2,7 +2,7 @@ name: Generate download sitemap
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   sitemap_job:
