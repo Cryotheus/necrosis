@@ -9,8 +9,11 @@ local PLAYER = {
 	JumpPower = 200, --how powerful our jump should be
 	MaxArmor = 0, --max armor we can have
 	MaxHealth = 100, --max health we can have
+	NecrosisKickDamage = 20,
 	NecrosisKickDelay = 0.5, --how long until the kick hits
+	NecrosisKickRange = 80,
 	NecrosisKickReset = 0.5, --how long until the kick resets (this is how long after the kick lands until we can kick again)
+	NecrosisKickSize = 9, --how big the kick is
 	NecrosisMaximumStamina = 4, --maximum stamina
 	RunSpeed = 320, --how fast to move when running
 	SlowWalkSpeed = 100, --how fast to move when slow-walking (+walk)
@@ -88,14 +91,17 @@ function PLAYER:ShouldDrawLocal() end
 
 function PLAYER:Spawn()
 	local ply = self.Player
+	ply.NecrosisKickDamage = self.NecrosisKickDamage
 
 	ply:SetupHands()
 	ply:SetViewOffset(Vector(0, 0, 64))
 	ply:SetViewOffsetDucked(Vector(0, 0, 28))
 	self:SetNetworkField("NecrosisKickDelay", "2Float")
+	self:SetNetworkField("NecrosisKickRange", "2Float")
 	self:SetNetworkField("NecrosisKickReset", "2Float")
+	self:SetNetworkField("NecrosisKickSize", "2Float")
 	self:SetNetworkField("NecrosisMaximumStamina", "2Float")
-
+	
 	--network vars defaults
 	--ply:SetNecrosisSprintStamina(self.NecrosisMaximumStamina)
 	--ply:SetNecrosisSprintStart(0)
