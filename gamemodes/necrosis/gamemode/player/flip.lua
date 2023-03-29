@@ -44,8 +44,6 @@ function GM:CalcView(ply, origin, angles, fov, znear, zfar)
 	} or self.BaseClass:CalcView(ply, origin, angles, fov, znear, zfar)
 end
 
-function GM:InitPostEntity() local_player = LocalPlayer() end
-
 function GM:InputMouseApply(command, _x, _y, angles)
 	if local_player and local_player:NecrosisPlaying() and not local_player:OnGround() and local_player:GetMoveType() == MOVETYPE_WALK then
 		if start_angle then
@@ -87,3 +85,6 @@ function GM:InputMouseApply(command, _x, _y, angles)
 
 	return false
 end
+
+--hooks
+hook.Add("InitPostEntity", "necrosis_init", function() local_player = LocalPlayer() end)

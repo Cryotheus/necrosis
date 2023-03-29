@@ -98,8 +98,8 @@ function PANEL:Init()
 				binder:SetCommand("+necrosis_special_grenade")
 				binder:SetHeight(120)
 				binder:SetNecrosisFont("Small")
-				binder:SetText("#necrosis.panels.settings_menu_binds.binder.sepcial_grenade")
-				self:RegisterBinder("sepcial_grenade", binder)
+				binder:SetText("#necrosis.panels.settings_menu_binds.binder.special_grenade")
+				self:RegisterBinder("special_grenade", binder)
 			end
 		end
 	end
@@ -180,7 +180,7 @@ end
 function PANEL:SetBindPreview(key)
 	local image_path = "materials/necrosis/binding_previews/" .. key .. ".png"
 	local scroller = self.PreviewScrollPanel
-	local video_path = "necrosis/webm/binding_previews/" .. key .. ".dat"
+	local video_path = "necrosis/download/webm/binding_previews/" .. key .. ".webm.dat"
 
 	scroller.HeaderLabel:SetText(self.Binders[key]:GetText())
 	scroller.InfoLabel:SetText("#necrosis.panels.settings_menu_binds.binder." .. key .. ".description")
@@ -201,6 +201,9 @@ function PANEL:SetBindPreview(key)
 		scroller.PreviewImage:SetVisible(false)
 		scroller.PreviewWEBM:SetVisible(false)
 	end
+
+	--fixes "sticky" docking
+	scroller:GetCanvas():InvalidateLayout(true)
 end
 
 function PANEL:Think()
