@@ -1,9 +1,11 @@
 --locals
 local PANEL = {}
+local valid_branch = BRANCH == "x86-64" or BRANCH == "chromium"
 
 --panel functions
 function PANEL:Init()
 	local preview_scroller
+	self.Binders = {}
 
 	do --scroller
 		local scroller = vgui.Create("DScrollPanel", self)
@@ -54,7 +56,6 @@ function PANEL:Init()
 
 			do --kick binder
 				local binder = vgui.Create("NecrosisBinderLabeled", left_panel)
-				binder.BindPreviewKey = "kick"
 				sizer.KickBinderPanel = binder
 
 				binder:Dock(TOP)
@@ -62,11 +63,11 @@ function PANEL:Init()
 				binder:SetHeight(120)
 				binder:SetNecrosisFont("Small")
 				binder:SetText("#necrosis.panels.settings_menu_binds.binder.kick")
+				self:RegisterBinder("kick", binder)
 			end
 
 			do --melee binder
 				local binder = vgui.Create("NecrosisBinderLabeled", right_panel)
-				binder.BindPreviewKey = "melee"
 				sizer.MeleeBinderPanel = binder
 
 				binder:Dock(TOP)
@@ -74,11 +75,11 @@ function PANEL:Init()
 				binder:SetHeight(120)
 				binder:SetNecrosisFont("Small")
 				binder:SetText("#necrosis.panels.settings_menu_binds.binder.melee")
+				self:RegisterBinder("melee", binder)
 			end
 
 			do --grenade binder
 				local binder = vgui.Create("NecrosisBinderLabeled", left_panel)
-				binder.BindPreviewKey = "grenade"
 				sizer.GrenadeBinderPanel = binder
 
 				binder:Dock(TOP)
@@ -86,11 +87,11 @@ function PANEL:Init()
 				binder:SetHeight(120)
 				binder:SetNecrosisFont("Small")
 				binder:SetText("#necrosis.panels.settings_menu_binds.binder.grenade")
+				self:RegisterBinder("grenade", binder)
 			end
 
 			do --special grenade binder
 				local binder = vgui.Create("NecrosisBinderLabeled", right_panel)
-				binder.BindPreviewKey = "sepcial_grenade"
 				sizer.SpecialGrenadeBinderPanel = binder
 
 				binder:Dock(TOP)
@@ -98,6 +99,7 @@ function PANEL:Init()
 				binder:SetHeight(120)
 				binder:SetNecrosisFont("Small")
 				binder:SetText("#necrosis.panels.settings_menu_binds.binder.sepcial_grenade")
+				self:RegisterBinder("sepcial_grenade", binder)
 			end
 		end
 	end
@@ -116,6 +118,7 @@ function PANEL:Init()
 			image:SetTall(width / image.ActualWidth * image.ActualHeight)
 			self.HeaderLabel:DockMargin(0, 0, 0, math.ceil(ScrH() * 0.005))
 			self.InfoLabel:DockMargin(info_padding, 0, info_padding, info_padding)
+			self.PreviewWEBM:SetTall(width * 9 / 16)
 		end
 
 		do --header label
@@ -130,6 +133,23 @@ function PANEL:Init()
 			preview_scroller:AddItem(label)
 		end
 
+		do --image
+			local image = vgui.Create("DImage", preview_scroller)
+			preview_scroller.PreviewImage = image
+
+			image:Dock(TOP)
+			image:SetImage("matsys_regressiontest/background")
+			image:SetVisible(false)
+		end
+
+		do --video
+			local webm = vgui.Create("NecrosisWEBM", preview_scroller)
+			preview_scroller.PreviewWEBM = webm
+
+			webm:Dock(TOP)
+			webm:SetVisible(false)
+		end
+
 		do --info label
 			local label = vgui.Create("DLabel", preview_scroller)
 			preview_scroller.InfoLabel = label
@@ -142,15 +162,6 @@ function PANEL:Init()
 			label:SetWrap(true)
 			preview_scroller:AddItem(label)
 		end
-
-		do --image
-			local image = vgui.Create("DImage", preview_scroller)
-			preview_scroller.PreviewImage = image
-
-			image:Dock(TOP)
-			image:SetImage("matsys_regressiontest/background")
-			image:SetVisible(false)
-		end
 	end
 end
 
@@ -161,44 +172,55 @@ function PANEL:PerformLayout(width)
 	self.ScrollPanel:DockMargin(0, 0, divide, 0)
 end
 
+function PANEL:RegisterBinder(key, binder)
+	binder.NecrosisBindPreviewKey = key
+	self.Binders[key] = binder
+end
+
 function PANEL:SetBindPreview(key)
 	local image_path = "materials/necrosis/binding_previews/" .. key .. ".png"
-	local preview_scroller = self.PreviewScrollPanel
+	local scroller = self.PreviewScrollPanel
+	local video_path = "necrosis/webm/binding_previews/" .. key .. ".dat"
 
-	preview_scroller.HeaderLabel:SetText(details.Binder:GetText())
+	scroller.HeaderLabel:SetText(self.Binders[key]:GetText())
+	scroller.InfoLabel:SetText("#necrosis.panels.settings_menu_binds.binder." .. key .. ".description")
 
-	if description then
-		local label = preview_scroller.InfoLabel
+	if valid_branch and file.Exists(video_path, "DATA") then
+		local webm = scroller.PreviewWEBM
 
-		label:SetText("#necrosis.panels.settings_menu_binds.binder." .. key .. ".description")
-		label:SetVisible(true)
-	else preview_scroller.InfoLabel:SetVisible(false) end
-
-	if file.Exists(image_path, "GAME") then
-		local image = preview_scroller.PreviewImage
+		webm:SetURL("asset://garrysmod/data/" .. video_path)
+		webm:SetVisible(true)
+		scroller.PreviewImage:SetVisible(false)
+	elseif file.Exists(image_path, "GAME") then
+		local image = scroller.PreviewImage
 
 		image:SetImage(image_path)
 		image:SetVisible(true)
-	else preview_scroller.PreviewImage:SetVisible(false) end
+		scroller.PreviewWEBM:SetVisible(false)
+	else
+		scroller.PreviewImage:SetVisible(false)
+		scroller.PreviewWEBM:SetVisible(false)
+	end
 end
 
 function PANEL:Think()
 	local panel = vgui.GetHoveredPanel()
+	local key
 	local world = vgui.GetWorldPanel()
 
 	repeat
-		local details = panel.BindPreviewKey
+		key = panel.NecrosisBindPreviewKey
 
-		if details then
-			details.Binder = panel
-
-			self:SetBindPreview(details)
-
-			break
-		end
+		if key then break end
 
 		panel = panel:GetParent()
 	until not IsValid(panel) or panel == world
+
+	if key and key ~= self.CurrentPreview then
+		self.CurrentPreview = key
+
+		if key then self:SetBindPreview(key) end
+	end
 end
 
 --post

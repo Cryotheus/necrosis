@@ -75,6 +75,7 @@ local config = {
 			slider = "client",
 			swap_panel = "client",
 			tabs = "client",
+			webm = "client",
 		},
 	},
 
