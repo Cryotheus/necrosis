@@ -1,4 +1,5 @@
 --locals
+local circle = Material("pyrition/gui/circle_64.png")
 local PANEL = {Paint = false}
 
 --panel function
@@ -16,73 +17,122 @@ function PANEL:Init()
 		label:SetText("#necrosis.panels.main_menu_game_difficulty.header")
 	end
 
+	do --active difficulty
+		local label = vgui.Create("DLabel", self)
+		self.ActiveDifficultyPanel = label
+
+		label:Dock(TOP)
+		label:SetContentAlignment(5)
+		label:SetNecrosisFont("Regular")
+		label:SetText("")
+		label:SetVisible(false)
+	end
+
 	do --difficulty options
 		local chosen_difficulty = GAMEMODE.DifficultyVoted
+		local difficulty_buttons = {}
 		local panel = vgui.Create("NecrosisColumnSizer", self)
 		self.DifficultyPanel = panel
 
 		panel:Dock(TOP)
 		panel:SetColumns(4)
 
-		do --diffculties
-			local difficulty_buttons = {}
+		function panel:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
 
-			for index, difficulty_table in ipairs(GAMEMODE.DifficultyList) do
-				local icon_button = vgui.Create("NecrosisMaterialDesignIconScalerButton", panel)
-				icon_button.NecrosisDifficultyIndex = index
+		function panel:UpdateCounts(votes)
+			print("hi!", votes)
+			PrintTable(votes)
+			for class, vote_count in pairs(votes) do
+				local button = difficulty_buttons[class]
 
-				icon_button:SetIcon(difficulty_table.Icon)
-				icon_button:SetIsToggle(true)
-				table.insert(difficulty_buttons, icon_button)
+				if IsValid(button) then button.VoteCount = vote_count end
+			end
+		end
+		
+		hook.Add("NecrosisDifficultyVoteCountChanged", panel, panel.UpdateCounts)
 
-				function icon_button:DoClick()
-					local index = index
+		--difficulties
+		for index, difficulty_table in ipairs(GAMEMODE.DifficultyList) do
+			local class = difficulty_table.Class
+			local icon_button = vgui.Create("NecrosisMaterialDesignIconScalerButton", panel)
+			local overlay = vgui.Create("Panel", icon_button)
+			difficulty_buttons[class] = icon_button
+			icon_button.NecrosisDifficultyIndex = index
+			icon_button.VoteCount = GAMEMODE.DifficultyVoteCount[class] or 0
 
-					if self:GetToggle() then
-						index = nil
+			overlay:Dock(FILL)
+			overlay:SetMouseInputEnabled(false)
 
-						self:SetToggle(false)
-					else for index, button in ipairs(difficulty_buttons) do button:SetToggle(button == self) end end
+			icon_button:SetIcon(difficulty_table.Icon)
+			icon_button:SetIsToggle(true)
+			icon_button:SetNecrosisFont("Tiny")
+			table.insert(difficulty_buttons, icon_button)
 
-					indexing_parent:SetDifficulty(index)
-					GAMEMODE:DifficultyVote(index)
+			function icon_button:DoClick()
+				local index = index
+
+				if self:GetToggle() then
+					index = nil
+
+					self:SetToggle(false)
+				else for index, button in ipairs(difficulty_buttons) do button:SetToggle(button == self) end end
+
+				indexing_parent:SetDifficulty(index)
+				GAMEMODE:DifficultyVote(index)
+			end
+
+			function overlay:Paint(width, height)
+				local text_width, text_height = icon_button:GetTextSize()
+				local vote_count = icon_button.VoteCount
+
+				if vote_count ~= 0 then
+					local x = width * 0.9 - math.max(text_height, text_width)
+					local y = height * 0.9 - text_height
+
+					local size_half = math.ceil((width - x) * 0.4)
+					local size = size_half * 2
+
+					surface.SetDrawColor(96, 96, 96, 224)
+					surface.SetMaterial(circle)
+					surface.DrawTexturedRect(x - size_half, y - size_half, size, size)
+					
+					draw.SimpleText(tostring(vote_count), icon_button:GetFont(), x - text_height * 0.1, y, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				end
+			end
 
-				if chosen_difficulty == difficulty_table.Class then
-					self.DifficultyIndex = index
+			if chosen_difficulty == difficulty_table.Class then
+				self.DifficultyIndex = index
 
-					icon_button:SetToggle(true)
-				end
+				icon_button:SetToggle(true)
 			end
 		end
 	end
 
 	do --difficulty description
-		local difficulty_label = vgui.Create("DLabel", self)
-		self.DifficultyLabel = difficulty_label
+		local label = vgui.Create("DLabel", self)
+		self.DifficultyLabel = label
 
-		difficulty_label:Dock(TOP)
-		difficulty_label:SetAutoStretchVertical(true)
-		difficulty_label:SetContentAlignment(5)
-		difficulty_label:SetNecrosisFont("Medium")
-		difficulty_label:SetText("")
-		difficulty_label:SetVisible(false)
+		label:Dock(TOP)
+		label:SetAutoStretchVertical(true)
+		label:SetContentAlignment(5)
+		label:SetNecrosisFont("Medium")
+		label:SetText("")
+		label:SetVisible(false)
 	end
 
 	do --difficulty description
-		local description_label = vgui.Create("DLabel", self)
-		self.DifficultyDescriptionLabel = description_label
+		local label = vgui.Create("DLabel", self)
+		self.DifficultyDescriptionLabel = label
 
-		description_label:Dock(TOP)
-		description_label:SetAutoStretchVertical(true)
-		description_label:SetContentAlignment(5)
-		description_label:SetNecrosisFont("Regular")
-		description_label:SetText("")
-		description_label:SetVisible(false)
-		description_label:SetWrap(true)
+		label:Dock(TOP)
+		label:SetAutoStretchVertical(true)
+		label:SetContentAlignment(5)
+		label:SetNecrosisFont("Regular")
+		label:SetText("")
+		label:SetVisible(false)
+		label:SetWrap(true)
 	end
 
-	hook.Add("NecrosisDifficultyVoteCountChanged", self, self.UpdateCounts)
 end
 
 function PANEL:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
@@ -134,8 +184,6 @@ function PANEL:Think()
 	if index == nil then index = self.DifficultyIndex end
 	if index ~= self.VisibleDifficultyIndex then self:SetVisibleDifficulty(index) end
 end
-
-function PANEL:UpdateCounts() end
 
 --post
 derma.DefineControl("NecrosisMainMenuGameDifficulty", "Panel with details about the current game's difficulty.", PANEL, "DSizeToContents")

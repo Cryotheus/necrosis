@@ -14,7 +14,7 @@ function GM:DifficultyVote(class_or_index)
 	else RunConsoleCommand("~necrosis_vote_difficulty") end
 end
 
-function GM:NecrosisDifficultyVoteCountChanged(_vote_counts) end
+function GM:NecrosisDifficultyVoteCountChanged(_vote_counts) print("hook done") end
 
 --commands
 concommand.Add("necrosis_cast_difficulty_vote", function(_, _, _, argument_string)
@@ -37,6 +37,7 @@ net.Receive("NecrosisDifficultyVote", function()
 	local gm = GAMEMODE
 	local votes = gm.DifficultyVoteCount
 
+	print("vote net")
 	--in case difficulties changed
 	table.Empty(votes)
 

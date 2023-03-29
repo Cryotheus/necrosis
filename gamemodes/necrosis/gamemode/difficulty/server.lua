@@ -27,11 +27,14 @@ function GM:DifficultyEvaluateVotes()
 end
 
 function GM:DifficultyQueueUpdate()
+	print("queued", self.DifficultyUpdateQueued)
 	if self.DifficultyUpdateQueued then return end
 
 	self.DifficultyUpdateQueued = true
 
 	timer.Simple(0, function()
+		self.DifficultyUpdateQueued = nil
+
 		net.Start("NecrosisDifficultyVote")
 
 		for index, difficulty in ipairs(self.DifficultyList) do
@@ -58,6 +61,7 @@ function GM:DifficultySet(class)
 end
 
 function GM:DifficultyVote(ply, class)
+	print(ply, class)
 	--remove existing vote
 	local player_vote = self.DifficultyPlayerVotes[ply]
 	self.DifficultyPlayerVotes[ply] = class

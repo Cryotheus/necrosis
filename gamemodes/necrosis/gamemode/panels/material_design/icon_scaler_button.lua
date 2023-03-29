@@ -28,7 +28,6 @@ function PANEL:Init()
 	self.IconX = 0.5
 	self.IconY = 0.5
 	self.Paint = self.UpdateIconColor
-	self.Paint = self.UpdateIconColor
 	self.SetText = self.SetTooltip
 end
 
