@@ -20,12 +20,14 @@ local kick_trace_hull = {
 
 --gamemode functions
 function GM:PlayerKick(ply)
+	---PREDICTED
 	ply:SetNecrosisKick(CurTime() + ply:GetPlayerClassNWField("NecrosisKickDelay", "2Float"))
 	ply:SetNecrosisKickAttacked(false)
 	ply:SetNecrosisKickBlocked(true)
 end
 
 function GM:PlayerKickImpact(ply, entity, position)
+	---PREDICTED
 	---Calls the appropriate kick impact function based on the entity and position.
 	---This can call PlayerKickImpactEntity, PlayerKickImpactMissed, or PlayerKickImpactWorld.
 	if position then
@@ -42,6 +44,7 @@ function GM:PlayerKickImpact(ply, entity, position)
 end
 
 function GM:PlayerKickStartCommand(ply, _player_class, command)
+	---PREDICTED
 	if self.PlayerKicking then command:AddKey(IN_CANCEL) end --set by client using a command
 
 	local kicking = command:KeyDown(IN_CANCEL)
@@ -73,6 +76,7 @@ function GM:PlayerKickStartCommand(ply, _player_class, command)
 end
 
 function GM:PlayerKickTrace(ply)
+	---PREDICTED
 	--overview:
 	--first we do a simple line trace to see if they are aiming at an entity
 	--if that doesn't work, we do a hull trace

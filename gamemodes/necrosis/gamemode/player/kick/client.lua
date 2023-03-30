@@ -18,9 +18,9 @@ end
 NECROSIS.PlayerKickEntity = kick_entity
 
 --gamemode functions
-function GM:PlayerKickImpactEntity() end
-function GM:PlayerKickImpactMissed() end
-function GM:PlayerKickImpactWorld() end
+function GM:PlayerKickImpactEntity(_ply, _entity, _position) end ---PREDICTED
+function GM:PlayerKickImpactMissed(_ply) end ---PREDICTED
+function GM:PlayerKickImpactWorld(_ply, _position) end ---PREDICTED
 
 function GM:PlayerKickNotfiy(ply, kick_time)
 	if LocalPlayer() ~= ply then return end
