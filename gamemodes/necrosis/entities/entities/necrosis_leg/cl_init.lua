@@ -45,7 +45,9 @@ function ENT:OnRemove() if IsValid(self.Costume) then self.Costume:Remove() end 
 
 function ENT:Reposition()
 	local ply = self.Player
-	local position, angles = LocalToWorld(Vector(0, -3.5, -2.5), Angle(-10, 0, 0), ply:GetShootPos(), ply:EyeAngles())
+	local eye_angles = ply:EyeAngles()
+	local pitch = math.Clamp(eye_angles[1] * -0.2, -10, 8) - 10
+	local position, angles = LocalToWorld(Vector(0, -3.5, -2.5), Angle(pitch, 0, 0), ply:GetShootPos(), eye_angles)
 
 	self:SetAngles(angles)
 	self:SetPos(position)
