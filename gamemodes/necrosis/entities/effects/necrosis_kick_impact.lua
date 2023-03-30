@@ -30,7 +30,7 @@ function EFFECT:Init(data)
 	else g, b = color[2], color[3] end
 
 	--for index = 1, math_Random(8, 12) do
-	for index = 1, math_Random(12, 18) do
+	for index = 1, math.random(12, 18) do
 		local particle = particle_emitter:Add("particle/particle_smokegrenade", origin)
 
 		if particle then
