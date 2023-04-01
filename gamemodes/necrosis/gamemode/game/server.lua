@@ -1,4 +1,4 @@
-SetGlobal2Bool("NecrosisGameActive", false)
+util.AddNetworkString("NecrosisGame")
 
 --locals
 local first_wave_delay = 10
@@ -22,21 +22,27 @@ end
 
 --gamemode functions
 function GM:GameCheckLoss()
+	---INTERNAL
 	---Initiate a game over if there are no survivors left.
-	for index, ply in ipairs(player.GetAll()) do if ply:NecrosisPlaying() then return end end
+	for index, ply in ipairs(player.GetAll()) do
+		--we'll likely do more checks here in the future
+		if ply:NecrosisPlaying() then return end
+	end
 
 	self:GameLose()
 end
 
+function GM:GameSync() PYRITION:NetStreamModelQueue("NecrosisGame", true) end
+
 function GM:NecrosisGameDropIn(ply)
 	---Called when a player attempts to drop in.
 	if ply:NecrosisPlaying() then return end
-	if GetGlobal2Bool("NecrosisWaveActive") or not GetGlobal2Bool("NecrosisGameActive") then ply:SetTeam(TEAM_WAITING)
+	if NECROSIS.WaveActive or not NECROSIS.GameActive then ply:SetTeam(TEAM_WAITING)
 	else self:PlayerSpawnAsSurvivor(ply, true, self.GameEvent and TEAM_SURVIVOR_EVENT) end
-	
+
 	self:GameDroppedIn(ply)
 
-	if GetGlobal2Bool("NecrosisWaveActive") then return end
+	if NECROSIS.WaveActive then return end
 
 	local count, total = count_ready()
 
@@ -44,8 +50,8 @@ function GM:NecrosisGameDropIn(ply)
 		start_progression = 0
 
 		self:GameTimerStart(total == 1 and start_minimum_delay or start_delay)
-		
-		function self:GameTimerElapsed() self:GameStart() end
+
+		function NECROSIS.GameTimerElapsed() GAMEMODE:GameStart() end
 	else
 		start_progression = math.max(start_progression or 0, count / total)
 
@@ -61,7 +67,7 @@ function GM:NecrosisGameDropOut(ply)
 
 	self:GameDroppedOut(ply)
 
-	if GetGlobal2Bool("NecrosisWaveActive") then self:GameCheckLoss()
+	if NECROSIS.WaveActive then self:GameCheckLoss()
 	elseif count_ready() == 0 then
 		start_progression = nil
 
@@ -71,9 +77,10 @@ end
 
 function GM:NecrosisGameFinish()
 	---Called when the game is finished.
-	SetGlobalBool("NecrosisGameActive", false)
+	NECROSIS.GameActive = false
 
 	self:GameFinished()
+	self:GameSync()
 end
 
 function GM:NecrosisGameLose()
@@ -84,16 +91,13 @@ end
 
 function GM:NecrosisGameStart()
 	---Called to start the game.
-	SetGlobalBool("NecrosisGameActive", true)
-	
-	function self:GameTimerElapsed()
-		self:WaveStart(1)
-		self:GameTimerStop()
-	end
-	
+	NECROSIS.GameActive = true
+
+	self:DifficultyEvaluateVotes()
+	self:GameStarted()
+	self:GameSync()
 	self:GameTimerStart(first_wave_delay)
 	self:PlayerSpawnWaiting()
-	self:GameStarted()
 end
 
 function GM:NecrosisGameWin()
@@ -104,7 +108,7 @@ end
 
 function GM:Think()
 	--run the timer think only if we have one
-	if self:GameTimerActive() then self:GameTimerThink() end
+	if NECROSIS.GameTimer then self:GameTimerThink() end
 end
 
 --commands

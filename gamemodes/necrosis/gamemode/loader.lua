@@ -1,5 +1,6 @@
 --https://github.com/Cryotheus/cryotheums_loader
-if not PYRITION then --Pyrition is required for this gamemode, so be as annoying as possible about it
+--Pyrition is required for this gamemode, so be as annoying as possible about it
+if not PYRITION then
 	local message = SERVER and MsgC or chat.AddText
 
 	local function give_me_pyrition()
@@ -24,6 +25,8 @@ end
 local config = {
 	--to prevent merge conflicts, please use trailing commas and don't stack tables on the same line
 	--but always stack the the value at the first index
+	--if a value is set to true, the key will be used as the value instead
+	--false means dont load
 	{
 		cl_init = "download",
 
@@ -93,16 +96,19 @@ local config = {
 			client = true,
 			server = true,
 			shared = true,
+			stream = "shared",
 		},
 
 		game = {
 			client = true,
 			server = true,
 			server_hooks = "server",
+			stream = "shared",
 
 			timer = {
 				client = true,
 				server = true,
+				stream = "shared",
 			},
 		},
 
@@ -138,7 +144,9 @@ local config = {
 		},
 
 		wave = {
+			client = true,
 			server = true,
+			stream = "shared",
 		},
 
 		weapon = {

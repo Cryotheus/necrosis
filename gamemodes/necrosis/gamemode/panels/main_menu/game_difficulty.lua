@@ -29,13 +29,14 @@ function PANEL:Init()
 	end
 
 	do --difficulty options
-		local chosen_difficulty = GAMEMODE.DifficultyVoted
+		local chosen_difficulty = NECROSIS.DifficultyVoted
 		local difficulty_buttons = {}
 		local panel = vgui.Create("NecrosisColumnSizer", self)
 		self.DifficultyPanel = panel
 
 		panel:Dock(TOP)
 		panel:SetColumns(4)
+		panel:SetVisible(false)
 
 		function panel:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
 
@@ -56,7 +57,7 @@ function PANEL:Init()
 			local overlay = vgui.Create("Panel", icon_button)
 			difficulty_buttons[class] = icon_button
 			icon_button.NecrosisDifficultyIndex = index
-			icon_button.VoteCount = GAMEMODE.DifficultyVoteCount[class] or 0
+			icon_button.VoteCount = NECROSIS.DifficultyVoteCount[class] or 0
 
 			overlay:Dock(FILL)
 			overlay:SetMouseInputEnabled(false)
@@ -131,6 +132,7 @@ function PANEL:Init()
 		label:SetWrap(true)
 	end
 
+	self:UpdateVisibility()
 end
 
 function PANEL:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
@@ -147,24 +149,25 @@ function PANEL:SetDifficulty(index)
 end
 
 function PANEL:SetVisibleDifficulty(index)
-	self.VisibleDifficultyIndex = index
-
 	if index then
 		local class = GAMEMODE:DifficultyGet(index).Class
 		local description_label = self.DifficultyDescriptionLabel
 		local difficulty_label = self.DifficultyLabel
+		self.VisibleDifficultyIndex = index
 
 		description_label:SetText("#necrosis.difficulties." .. class .. ".description")
 		description_label:SetVisible(true)
 		difficulty_label:SetText("#necrosis.difficulties." .. class)
 		difficulty_label:SetVisible(true)
 	else
+		self.VisibleDifficultyIndex = nil
+
 		self.DifficultyDescriptionLabel:SetVisible(false)
 		self.DifficultyLabel:SetVisible(false)
 	end
 end
 
-function PANEL:Think()
+function PANEL:ThinkHover()
 	local index
 	local panel = vgui.GetHoveredPanel()
 	local world = vgui.GetWorldPanel()
@@ -181,6 +184,25 @@ function PANEL:Think()
 
 	if index == nil then index = self.DifficultyIndex end
 	if index ~= self.VisibleDifficultyIndex then self:SetVisibleDifficulty(index) end
+end
+
+function PANEL:UpdateVisibility()
+	local active_difficulty = self.ActiveDifficultyPanel
+	local difficulty_options = self.DifficultyPanel
+
+	if NECROSIS.GameActive then
+		local difficulty_index = GetGlobal2Int("NecrosisDifficulty")
+		self.Think = nil
+
+		active_difficulty:SetVisible(true)
+		difficulty_options:SetVisible(false)
+		self:SetVisibleDifficulty(difficulty_index ~= 0 and difficulty_index)
+	else
+		self.Think = self.ThinkHover
+
+		active_difficulty:SetVisible(false)
+		difficulty_options:SetVisible(true)
+	end
 end
 
 --post

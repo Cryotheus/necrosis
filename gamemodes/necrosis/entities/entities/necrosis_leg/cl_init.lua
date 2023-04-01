@@ -7,7 +7,6 @@ function ENT:CreateCostume(model)
 	local costume = ClientsideModel(model, RENDERGROUP_TRANSLUCENT)
 	self.Costume = costume
 
-	--costume:Activate()
 	costume:AddEffects(EF_BONEMERGE)
 	costume:DrawShadow(false)
 	costume:SetLocalAngles(angle_zero)
@@ -23,15 +22,13 @@ function ENT:DrawTranslucent(flags)
 	local costume = self.Costume
 	local ply = self.Player
 
-	if not ply:IsValid() or not costume:IsValid() then return end
+	if not ply:IsValid() or not costume:IsValid() or ply:ShouldDrawLocalPlayer() then return end
 
-	if not ply:ShouldDrawLocalPlayer() then
-		self:Reposition()
-	
-		cam.IgnoreZ(true)
-			costume:DrawModel(flags)
-		cam.IgnoreZ(false)
-	end
+	self:Reposition()
+
+	cam.IgnoreZ(true)
+		costume:DrawModel(flags)
+	cam.IgnoreZ(false)
 end
 
 function ENT:Initialize()

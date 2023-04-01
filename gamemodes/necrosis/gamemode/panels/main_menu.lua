@@ -179,10 +179,14 @@ function PANEL:Init()
 
 					--wait until the player is valid to set the avatar
 					if local_player:IsValid() then avatar:SetPlayer(local_player, 184)
-					else hook.Add("InitPostEntity", avatar, function(self)
-						hook.Remove("InitPostEntity", self)
-						self:SetPlayer(LocalPlayer(), 184)
-					end) end
+					else
+						hook.Add("InitPostEntity", avatar, function(self)
+							hook.Remove("InitPostEntity", self)
+							self:SetPlayer(LocalPlayer(), 184)
+						end)
+					end
+
+					function avatar:OnRemove() hook.Remove("InitPostEntity", self) end
 				end
 
 				do --level
@@ -441,4 +445,4 @@ function PANEL:SetSkyBox(path)
 end
 
 --post
-derma.DefineControl("NecrosisMainMenu", "", PANEL, "EditablePanel")
+derma.DefineControl("NecrosisMainMenu", "The main menu of Necrosis.", PANEL, "EditablePanel")
