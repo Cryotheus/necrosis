@@ -19,9 +19,11 @@ function GM:DifficultyEvaluateVotes()
 		end
 	end
 
+	NECROSIS.Difficulty = self.DifficultyList[record].Index
+
+	 --in case players voted for difficulties that no longer exist (e.g. reloaded gamemode with different difficulties)
 	table.Empty(NECROSIS.DifficultyPlayerVotes)
-	table.Empty(votes_table) --in case players voted for difficulties that no longer exist (e.g. reloaded gamemode with different difficulties)
-	self:DifficultySet(record)
+	table.Empty(votes_table)
 end
 
 function GM:DifficultyReset()
@@ -30,7 +32,6 @@ function GM:DifficultyReset()
 	self:DifficultySync()
 end
 
-function GM:DifficultySet(class_or_index) NECROSIS.Difficulty = GAMEMODE:DifficultyGet(class_or_index).Index end
 function GM:DifficultySyncVotes() PYRITION:NetStreamModelQueue("NecrosisDifficultyVote", true) end ---Writes and syncs the votes on the next tick.
 
 function GM:DifficultyVote(ply, class)
@@ -53,7 +54,7 @@ end
 
 --commands
 concommand.Add("~necrosis_vote_difficulty", function(ply, _command, arguments)
-	if NECROSIS.DifficultyActive then return end
+	if NECROSIS.Difficulty then return end
 	if not ply:IsValid() then return end
 
 	local difficulty = GAMEMODE:DifficultyGet(tonumber(arguments[1]))
