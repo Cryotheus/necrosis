@@ -87,6 +87,13 @@ function GM:NecrosisGameLose()
 	---Called when we are about to start the losing sequence.
 	self:GameLost()
 	self:GameFinish()
+
+	game.CleanUpMap(false, {
+		--cleaning up these entities will CRASH THE GAME
+		"env_fire",
+		"entityflame",
+		"_firesmoke"
+	})
 end
 
 function GM:NecrosisGameStart()

@@ -1,11 +1,5 @@
 --gamemode functions
-function GM:StartCommand(ply, command)
-	if ply:NecrosisSpectating() then return end
-
-	local player_class = baseclass.Get(player_manager.GetPlayerClass(ply))
-	
-	self:PlayerKickStartCommand(ply, player_class, command)
-
+function GM:PlayerSprintStartCommand(ply, _command, player_class)
 	--if they don't have maximum stamina in their player table, they're not playing
 	if not player_class.NecrosisMaximumStamina then return end
 

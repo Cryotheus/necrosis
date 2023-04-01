@@ -49,14 +49,6 @@ end
 
 function PLAYER:Move(_move) end
 
-function PLAYER:SetNetworkField(key, field_type)
-	local ply = self.Player
-	local value = self[key]
-
-	ply[key] = value
-	ply["SetNW" .. field_type](ply, key, value)
-end
-
 function PLAYER:PostDrawViewModel(_view_model, _weapon) end
 function PLAYER:PreDrawViewModel(_view_model, _weapon) end
 
@@ -66,6 +58,14 @@ function PLAYER:SetModel()
 
 	util.PrecacheModel(player_model)
 	ply:SetModel(player_model)
+end
+
+function PLAYER:SetNetworkField(key, field_type)
+	local ply = self.Player
+	local value = self[key]
+
+	ply[key] = value
+	ply["SetNW" .. field_type](ply, key, value)
 end
 
 function PLAYER:SetupDataTables()

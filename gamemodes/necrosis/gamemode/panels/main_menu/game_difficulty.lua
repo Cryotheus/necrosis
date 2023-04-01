@@ -191,8 +191,11 @@ function PANEL:UpdateVisibility()
 	local difficulty_options = self.DifficultyPanel
 
 	if NECROSIS.GameActive then
-		local difficulty_index = GetGlobal2Int("NecrosisDifficulty")
+		local difficulty_index = NECROSIS.Difficulty
 		self.Think = nil
+
+		if difficulty_index then active_difficulty:SetText("#necrosis.difficulties." .. GAMEMODE:DifficultyGet(difficulty_index).Class)
+		else active_difficulty:SetText("Unknown") end
 
 		active_difficulty:SetVisible(true)
 		difficulty_options:SetVisible(false)

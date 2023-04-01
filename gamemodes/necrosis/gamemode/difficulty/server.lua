@@ -4,26 +4,30 @@ NECROSIS.DifficultyVotes = NECROSIS.DifficultyVotes or {}
 
 --gamemode functions
 function GM:DifficultyEvaluateVotes()
+	local difficulty_votes = NECROSIS.DifficultyVotes
 	local record = "normal" --default difficulty
 	local record_votes = 0
-	local votes_table = NECROSIS.DifficultyVotes
 
-	for index, difficulty in ipairs(self.DifficultyList) do
+	for index, difficulty in ipairs(GAMEMODE.DifficultyList) do
 		local class = difficulty.Class
-		local votes = votes_table[class]
-		votes_table[class] = nil
+		local votes = difficulty_votes[class]
 
-		if votes and votes > record_votes then
-			record = class
-			record_votes = votes
+		if votes then
+			difficulty_votes[class] = nil
+			votes = #votes
+			
+			if votes > record_votes then
+				record = difficulty.Class
+				record_votes = votes
+			end
 		end
 	end
 
 	NECROSIS.Difficulty = self.DifficultyList[record].Index
 
-	 --in case players voted for difficulties that no longer exist (e.g. reloaded gamemode with different difficulties)
+	--in case players voted for difficulties that no longer exist (e.g. reloaded gamemode with different difficulties)
 	table.Empty(NECROSIS.DifficultyPlayerVotes)
-	table.Empty(votes_table)
+	table.Empty(difficulty_votes)
 end
 
 function GM:DifficultyReset()

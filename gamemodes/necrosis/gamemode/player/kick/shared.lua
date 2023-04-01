@@ -43,7 +43,7 @@ function GM:PlayerKickImpact(ply, entity, position)
 	self:PlayerKickImpactMissed(ply)
 end
 
-function GM:PlayerKickStartCommand(ply, _player_class, command)
+function GM:PlayerKickStartCommand(ply, command, _player_class)
 	---PREDICTED
 	if self.PlayerKicking then command:AddKey(IN_CANCEL) end --set by client using a command
 

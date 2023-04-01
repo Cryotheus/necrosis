@@ -7,10 +7,11 @@ function GM:NecrosisWaveEnd(wave)
 	NECROSIS.WaveActive = false
 	NECROSIS.WaveType = nil
 
+	self:GameTimerStart(wave_intermission)
 	self:PlayerSpawnWaiting()
 	self:WaveSync()
 
-	self:GameTimerStart(wave_intermission)
+	function NECROSIS.GameTimerElapsed() self:WaveStart(wave + 1) end
 end
 
 function GM:NecrosisWaveStart(wave)
