@@ -53,8 +53,11 @@ local config = {
 			column_sizer = "client",
 
 			main_menu = {"client",
-				game = "client",
-				game_difficulty = "client",
+				game = {"client",
+					difficulty = "client",
+					ready_button = "client",
+				},
+
 				model = "client",
 				player = "client",
 				player_list = "client",
@@ -79,6 +82,12 @@ local config = {
 			swap_panel = "client",
 			tabs = "client",
 			webm = "client",
+		},
+
+		player = {
+			team = {
+				shared = true,
+			},
 		},
 	},
 
@@ -126,7 +135,10 @@ local config = {
 			server = true,
 			shared = true,
 			sprint = "shared",
-			team = "shared",
+
+			team = {
+				client = true,
+			},
 		},
 
 		player_class = {

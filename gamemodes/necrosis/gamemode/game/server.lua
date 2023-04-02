@@ -59,11 +59,15 @@ function GM:NecrosisGameDropIn(ply)
 	end
 end
 
-function GM:NecrosisGameDropOut(ply)
+function GM:NecrosisGameDropOut(ply, use_team)
+	local was_dropping_in = ply:NecrosisDroppingIn()
+	use_team = use_team or TEAM_UNASSIGNED
+
 	---Called when a player attempts to drop out.
-	if ply:Team() == TEAM_SPECTATOR then return end
-	if ply:NecrosisPlaying() then self:PlayerSpawnAsSpectator(ply, true)
-	else ply:SetTeam(TEAM_SPECTATOR) end
+	if ply:Team() == use_team then return end
+	if ply:NecrosisPlaying() then self:PlayerSpawnAsSpectator(ply, true, use_team)
+	else ply:SetTeam(use_team) end
+	if not was_dropping_in then return end
 
 	self:GameDroppedOut(ply)
 
@@ -95,6 +99,8 @@ function GM:NecrosisGameLose()
 		"_firesmoke"
 	})
 end
+
+function GM:NecrosisGameSpectate(ply) self:GameDropOut(ply, TEAM_SPECTATOR) end
 
 function GM:NecrosisGameStart()
 	---Called to start the game.
@@ -129,4 +135,10 @@ concommand.Add("necrosis_dropout", function(ply)
 	if not ply:IsValid() then return end
 
 	GAMEMODE:GameDropOut(ply)
+end)
+
+concommand.Add("necrosis_spectate", function(ply)
+	if not ply:IsValid() then return end
+
+	GAMEMODE:GameSpectate(ply)
 end)

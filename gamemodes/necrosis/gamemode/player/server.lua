@@ -118,7 +118,7 @@ end
 function GM:PlayerDisconnected(_ply) self:PlayersPlayingList(false, true) end
 
 function GM:PlayerInitialSpawn(ply)
-	self:PlayerSpawnAsSpectator(ply)
+	self:PlayerSpawnAsSpectator(ply, false, TEAM_UNASSIGNED)
 	self:PlayersPlayingList(false, true)
 end
 

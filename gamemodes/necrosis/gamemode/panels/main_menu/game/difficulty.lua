@@ -136,11 +136,7 @@ function PANEL:Init()
 end
 
 function PANEL:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
-
-function PANEL:PerformLayout()
-	--more?
-	self:SizeToChildren(false, true)
-end
+function PANEL:PerformLayout() self:SizeToChildren(false, true) end
 
 function PANEL:SetDifficulty(index)
 	self.DifficultyIndex = index

@@ -8,8 +8,8 @@ local MODEL = {
 function MODEL:InitialSync() return next(NECROSIS.DifficultyVotes) and true end
 
 function MODEL:Read()
-	if self:ReadBool() then GAMEMODE:NecrosisGameStart(self:ReadULong())
-	else GAMEMODE:NecrosisGameFinish() end
+	if self:ReadBool() then GAMEMODE:GameStart(self:ReadULong())
+	else GAMEMODE:GameFinish() end
 end
 
 function MODEL:Write()

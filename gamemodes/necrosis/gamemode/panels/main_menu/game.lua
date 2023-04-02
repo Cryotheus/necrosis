@@ -20,6 +20,13 @@ function PANEL:Init()
 		end
 	end
 
+	do --ready button
+		local button = vgui.Create("NecrosisMainMenuGameReadyButton", self)
+		self.ReadyButton = button
+
+		button:Dock(TOP)
+	end
+
 	do --difficulty panel
 		local difficulty = vgui.Create("NecrosisMainMenuGameDifficulty", self)
 		self.DifficultyPanel = difficulty
