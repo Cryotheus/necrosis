@@ -74,13 +74,14 @@ function GM:InputMouseApply(command, _x, _y, angles)
 	end
 
 	if start_angle then
-		local accumulator = Angle(accumulator[1], accumulator[2], 0)
+		local pitch = accumulator[1]
 
-		command:SetViewAngles(accumulator)
+		command:SetViewAngles(Angle(pitch, accumulator[2], 0))
 
 		lock_angle = nil
 		start_angle = nil
-		transition_time = RealTime()
+
+		if pitch > 85 or pitch < -85 or math.abs(accumulator[3]) > 0.5 then transition_time = RealTime() end
 	end
 
 	return false

@@ -109,6 +109,8 @@ function GM:NecrosisGameStart()
 	self:GameSync()
 	self:GameTimerStart(first_wave_delay)
 	self:PlayerSpawnWaiting()
+
+	function NECROSIS.GameTimerElapsed() GAMEMODE:WaveStart(1) end
 end
 
 function GM:NecrosisGameWin()

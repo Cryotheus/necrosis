@@ -6,7 +6,7 @@ local spectating_teams = GM.PlayerTeamsSpectating
 
 --player methods
 function player_meta:NecrosisDroppingIn() return self:Team() == TEAM_WAITING end ---Spectating, and still waiting to drop in.
-function player_meta:NecrosisIdle() return idle_teams[self:Team()] or false end ---Not playing, dropping in, or a spectator.
+function player_meta:NecrosisIsIdle() return idle_teams[self:Team()] or false end ---Not playing, dropping in, or a spectator.
 function player_meta:NecrosisIsSpectator() return self:Team() == TEAM_SPECTATOR end ---Spectating, and not waiting to drop in.
 function player_meta:NecrosisPlaying() return playing_teams[self:Team()] or false end ---Playing, as a survivor.
 function player_meta:NecrosisSpectating() return spectating_teams[self:Team()] or false end ---Opposite of `Player:NecrosisPlaying`.

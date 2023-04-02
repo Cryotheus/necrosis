@@ -1,41 +1,32 @@
---locals
-local old_functions = {}
-
---local tables
-local detoured_hooks = {
-	"PreDrawHUD",
-	"PreDrawOpaqueRenderables",
-	"PreDrawSkyBox",
-	"PreDrawTranslucentRenderables",
-	"PreDrawViewModel",
-}
-
---local functions
-local function always_true() return true end
-
 --gamemode
-function GM:NecrosisUIMainMenuDisable()
-	NECROSIS.UIMainMenuPanel = false
+function GM:HUDPaint()
+	if NECROSIS.UIMainMenuPanel then return end
 
-	--undo detours
-	for index, hook_name in ipairs(detoured_hooks) do self[hook_name], old_functions[hook_name] = old_functions[hook_name] end
-
-	self.PreDrawEffects = nil
+	hook.Call("HUDDrawTargetID", self)
+	hook.Call("HUDDrawPickupHistory", self)
+	hook.Call("DrawDeathNotice", self, 0.85, 0.04)
 end
 
-function GM:NecrosisUIMainMenuEnable(panel)
-	--make detours for the hooks
-	--did it like this because I wanted to see how high I could get the main menu frame rate :p
-	for index, hook_name in ipairs(detoured_hooks) do old_functions[hook_name], self[hook_name] = self[hook_name], always_true end
+function GM:HUDShouldDraw(_name)
+	if NECROSIS.UIMainMenuPanel then return false end
 
-	--self.PreDrawEffects = pre_draw_effects_override
-	NECROSIS.UIMainMenuPanel = panel
+	return true
 end
+
+function GM:NecrosisUIMainMenuDisable() NECROSIS.UIMainMenuPanel = false end
+function GM:NecrosisUIMainMenuEnable(panel) NECROSIS.UIMainMenuPanel = panel end
 
 function GM:NecrosisUIMainMenuOpen()
 	if NECROSIS.UIMainMenuPanel then return end
 
 	vgui.Create("NecrosisMainMenu")
+end
+
+function GM:PreDrawEffects()
+	if not NECROSIS.GameActive then
+		if gui.IsGameUIVisible() then render.Clear(0, 0, 0, 255, true, true)
+		else self:UIMainMenuOpen() end
+	end
 end
 
 function GM:UIMainMenuClose() if NECROSIS.UIMainMenuPanel then NECROSIS.UIMainMenuPanel:Close() end end

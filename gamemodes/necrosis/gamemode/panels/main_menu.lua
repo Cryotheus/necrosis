@@ -4,6 +4,12 @@ local sky_distance = 200
 local sky_quadrant_angles = {180, 180, 180, 180, 0, 0}
 local necrosis_music_volume = CreateClientConVar("necrosis_music_volume", "1.2", true, false, "Music volume", 0, 5)
 
+local material_blur = CreateMaterial("necrosis_pp/main_menu_blur", "GMODScreenspace", {
+	["$basetexture"] = "_rt_FullFrameFB",
+	["$texturealpha"] = "0",
+	["$vertexalpha"] = "0",
+})
+
 --local tables
 local sky_quadrant_normals = {
 	Vector(0, 1, 0),
@@ -40,7 +46,7 @@ function PANEL:Init()
 	local swapper
 	self.CameraAngle = Angle(0, 0, 0)
 
-	do --emergency button for debug
+	if false then --emergency button for debug
 		local button = vgui.Create("DButton", self)
 		self.CloseButton = button
 
@@ -368,6 +374,30 @@ function PANEL:Paint()
 		self.Paint = nil
 
 		self:Close()
+
+		return
+	end
+	
+	local local_player = LocalPlayer()
+
+	if local_player:IsValid() and local_player:NecrosisPlaying() then
+		local clipping = DisableClipping(true)
+		local x, y = self:LocalToScreen(0, 0)
+
+		surface.SetMaterial(material_blur)
+		surface.SetDrawColor(255, 255, 255, 255)
+
+		for i = 0.33, 1, 0.33 do
+			material_blur:SetFloat("$blur", 5 * i)
+			material_blur:Recompute()
+
+			render.UpdateScreenEffectTexture()
+			surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
+		end
+	
+		surface.SetDrawColor(128, 128, 128, 4)
+		surface.DrawRect(-x, -y, ScrW(), ScrH())
+		DisableClipping(clipping)
 
 		return
 	end
