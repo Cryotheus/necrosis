@@ -10,6 +10,13 @@ local material_blur = CreateMaterial("necrosis_pp/main_menu_blur", "GMODScreensp
 	["$vertexalpha"] = "0",
 })
 
+local material_brighten = CreateMaterial("necrosis_pp/main_menu_brighten", "UnlitGeneric", {
+	["$additive"] = "1",
+	["$basetexture"] = "color/white",
+	["$vertexalpha"] = "1",
+	["$vertexcolor"] = "1",
+})
+
 --local tables
 local sky_quadrant_normals = {
 	Vector(0, 1, 0),
@@ -369,7 +376,7 @@ function PANEL:OnRemove()
 	hook.Remove("OnScreenSizeChanged", self)
 end
 
-function PANEL:Paint()
+function PANEL:Paint(width, height)
 	if gui.IsGameUIVisible() then
 		self.Paint = nil
 
@@ -381,28 +388,25 @@ function PANEL:Paint()
 	local local_player = LocalPlayer()
 
 	if local_player:IsValid() and local_player:NecrosisPlaying() then
-		local clipping = DisableClipping(true)
-		local x, y = self:LocalToScreen(0, 0)
-
 		surface.SetMaterial(material_blur)
 		surface.SetDrawColor(255, 255, 255, 255)
 
-		for i = 0.33, 1, 0.33 do
-			material_blur:SetFloat("$blur", 5 * i)
+		for fraction = 0.33, 1, 0.33 do
+			material_blur:SetFloat("$blur", 5 * fraction)
 			material_blur:Recompute()
 
 			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
+			surface.DrawTexturedRect(0, 0, width, height)
 		end
-	
-		surface.SetDrawColor(128, 128, 128, 4)
-		surface.DrawRect(-x, -y, ScrW(), ScrH())
-		DisableClipping(clipping)
+		
+		surface.SetDrawColor(14, 14, 14, 255)
+		surface.SetMaterial(material_brighten)
+		surface.DrawTexturedRect(0, 0, width, height)
 
 		return
 	end
 
-	local width_half = ScrW() * 0.5
+	local width_half = width * 0.5
 	local x_fraction = (width_half - gui.MouseX()) / width_half
 	local y_fraction = (gui.MouseY() - ScrH() * 0.5) / width_half
 
