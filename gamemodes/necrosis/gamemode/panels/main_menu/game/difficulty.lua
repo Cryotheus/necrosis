@@ -1,31 +1,18 @@
 --locals
 local circle = Material("pyrition/gui/circle_64.png")
-local PANEL = {Paint = false}
+local PANEL = {}
 
 --panel function
 function PANEL:Init()
 	local indexing_parent = self
 
 	do --header label
-		local label = vgui.Create("DLabel", self)
-		self.DifficultyLabel = label
+		local label = vgui.Create("NecrosisRuledHeader", self)
+		self.HeaderLabel = label
 
 		label:Dock(TOP)
-		label:SetAutoStretchVertical(true)
-		label:SetContentAlignment(5)
-		label:SetNecrosisFont("Medium")
+		label:SetContentAlignment(6)
 		label:SetText("#necrosis.panels.main_menu_game_difficulty.header")
-	end
-
-	do --active difficulty
-		local label = vgui.Create("DLabel", self)
-		self.ActiveDifficultyPanel = label
-
-		label:Dock(TOP)
-		label:SetContentAlignment(5)
-		label:SetNecrosisFont("Regular")
-		label:SetText("")
-		label:SetVisible(false)
 	end
 
 	do --difficulty options
@@ -136,7 +123,11 @@ function PANEL:Init()
 end
 
 function PANEL:OnRemove() hook.Remove("NecrosisDifficultyVoteCountChanged", self) end
-function PANEL:PerformLayout() self:SizeToChildren(false, true) end
+
+function PANEL:PerformLayout()
+	self.HeaderLabel:Scale()
+	self:SizeToChildren(false, true)
+end
 
 function PANEL:SetDifficulty(index)
 	self.DifficultyIndex = index
@@ -183,23 +174,17 @@ function PANEL:ThinkHover()
 end
 
 function PANEL:UpdateVisibility()
-	local active_difficulty = self.ActiveDifficultyPanel
 	local difficulty_options = self.DifficultyPanel
 
 	if NECROSIS.GameActive then
 		local difficulty_index = NECROSIS.Difficulty
 		self.Think = nil
 
-		if difficulty_index then active_difficulty:SetText("#necrosis.difficulties." .. GAMEMODE:DifficultyGet(difficulty_index).Class)
-		else active_difficulty:SetText("Unknown") end
-
-		active_difficulty:SetVisible(true)
 		difficulty_options:SetVisible(false)
 		self:SetVisibleDifficulty(difficulty_index ~= 0 and difficulty_index)
 	else
 		self.Think = self.ThinkHover
 
-		active_difficulty:SetVisible(false)
 		difficulty_options:SetVisible(true)
 	end
 end

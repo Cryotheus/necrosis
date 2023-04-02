@@ -1,23 +1,15 @@
 --locals
-local color_gray = Color(180, 180, 180)
 local PANEL = {Paint = false}
 
 --panel function
 function PANEL:Init()
 	do --header label
-		local label = vgui.Create("DLabel", self)
+		local label = vgui.Create("NecrosisRuledHeader", self)
 		self.HeaderLabel = label
 
 		label:Dock(TOP)
 		label:SetContentAlignment(6)
-		label:SetNecrosisFont("Tiny")
 		label:SetText("#necrosis.panels.main_menu_game.header")
-		label:SetTextColor(color_gray)
-
-		function label:Paint(width, height)
-			surface.SetDrawColor(color_gray)
-			surface.DrawLine(0, height - 1, width, height - 1)
-		end
 	end
 
 	do --ready button
@@ -35,13 +27,7 @@ function PANEL:Init()
 	end
 end
 
-function PANEL:PerformLayout()
-	local header_label = self.HeaderLabel
-	local text_height = select(2, header_label:GetTextSize())
-
-	header_label:DockMargin(0, 0, 0, text_height)
-	header_label:SetTall(text_height * 1.1)
-end
+function PANEL:PerformLayout() self.ReadyButton:DockMargin(0, 0, 0, self.HeaderLabel:Scale()) end
 
 --post
 derma.DefineControl("NecrosisMainMenuGame", "Panel with details about the current game.", PANEL, "Panel")

@@ -20,7 +20,7 @@ function GM:GameTimerStart(delay)
 end
 
 function GM:GameTimerStop()
-	NECROSIS.GameTimer = 0
+	NECROSIS.GameTimer = nil
 	NECROSIS.GameTimerElapsed = nil
 end
 

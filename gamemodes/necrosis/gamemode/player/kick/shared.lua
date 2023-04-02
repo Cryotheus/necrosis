@@ -54,7 +54,7 @@ function GM:PlayerKickStartCommand(ply, command, _player_class)
 		ply:SetNecrosisKicking(kicking)
 
 		--make the player start a kick
-		if kicking and not (command:KeyDown(IN_SPEED) and ply:OnGround() or ply:GetNecrosisKickBlocked()) then
+		if kicking and not ply:GetNecrosisKickBlocked() then
 			--checks: pressing the key, not sprinting on the ground, and kicking is not blocked
 			self:PlayerKick(ply)
 		end

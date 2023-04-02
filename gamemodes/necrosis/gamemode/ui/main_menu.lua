@@ -15,7 +15,7 @@ local function always_true() return true end
 
 --gamemode
 function GM:NecrosisUIMainMenuDisable()
-	self.UIMainMenuPanel = false
+	NECROSIS.UIMainMenuPanel = false
 
 	--undo detours
 	for index, hook_name in ipairs(detoured_hooks) do self[hook_name], old_functions[hook_name] = old_functions[hook_name] end
@@ -29,14 +29,16 @@ function GM:NecrosisUIMainMenuEnable(panel)
 	for index, hook_name in ipairs(detoured_hooks) do old_functions[hook_name], self[hook_name] = self[hook_name], always_true end
 
 	--self.PreDrawEffects = pre_draw_effects_override
-	self.UIMainMenuPanel = panel
+	NECROSIS.UIMainMenuPanel = panel
 end
 
 function GM:NecrosisUIMainMenuOpen()
-	if self.UIMainMenuPanel then return end
+	if NECROSIS.UIMainMenuPanel then return end
 
 	vgui.Create("NecrosisMainMenu")
 end
+
+function GM:UIMainMenuClose() if NECROSIS.UIMainMenuPanel then NECROSIS.UIMainMenuPanel:Close() end end
 
 --hooks
 hook.Add("Tick", "NecrosisUIMainMenu", function()

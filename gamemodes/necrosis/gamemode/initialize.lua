@@ -5,8 +5,8 @@ GM.TeamBased = false
 GM.Version = "0.1.0"
 GM.Website = "https://github.com/Cryotheus/necrosis"
 
---DeriveGamemode("base")
-DeriveGamemode("sandbox")
+DeriveGamemode("base")
+--DeriveGamemode("sandbox") --for debug only
 
 --post
 include("loader.lua")

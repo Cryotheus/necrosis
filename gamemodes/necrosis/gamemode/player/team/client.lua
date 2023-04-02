@@ -13,6 +13,8 @@ function GM:NecrosisPlayerTeamUpdated(ply, old_team, new_team)
 		if idle_teams[new_team] then self:GameDropOut(ply)
 		elseif new_team == TEAM_SPECTATOR then self:GameSpectate(ply) end
 	end
+
+	if not was_playing and playing_teams[new_team] then self:GamePlaying(ply) end
 end
 
 function GM:PlayerTeamThink()

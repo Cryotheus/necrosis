@@ -72,6 +72,8 @@ local config = {
 				icon_volume = "client",
 			},
 
+			ruled_header = "client",
+
 			settings_menu = {"client",
 				credits = "client",
 				binds = "client",

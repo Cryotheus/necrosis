@@ -5,6 +5,7 @@ local kick_damage_type = bit.bor(DMG_CLUB, DMG_NEVERGIB)
 
 --local functions
 local function create_effect(position, normal, color)
+	--RELEASE: make this properly predicted
 	local effect = EffectData()
 
 	effect:SetAngles(normal:Angle())

@@ -26,7 +26,7 @@ function GM:GameCheckLoss()
 	---Initiate a game over if there are no survivors left.
 	for index, ply in ipairs(player.GetAll()) do
 		--we'll likely do more checks here in the future
-		if ply:NecrosisPlaying() then return end
+		if ply:NecrosisPlaying() and ply:NecrosisSurviving() then return end
 	end
 
 	self:GameLose()
@@ -42,7 +42,7 @@ function GM:NecrosisGameDropIn(ply)
 
 	self:GameDroppedIn(ply)
 
-	if NECROSIS.WaveActive then return end
+	if NECROSIS.GameActive then return end
 
 	local count, total = count_ready()
 
@@ -60,22 +60,20 @@ function GM:NecrosisGameDropIn(ply)
 end
 
 function GM:NecrosisGameDropOut(ply, use_team)
-	local was_dropping_in = ply:NecrosisDroppingIn()
+	local call_hook = ply:NecrosisDroppingIn() or ply:NecrosisPlaying()
 	use_team = use_team or TEAM_UNASSIGNED
 
 	---Called when a player attempts to drop out.
 	if ply:Team() == use_team then return end
 	if ply:NecrosisPlaying() then self:PlayerSpawnAsSpectator(ply, true, use_team)
 	else ply:SetTeam(use_team) end
-	if not was_dropping_in then return end
+	if call_hook then self:GameDroppedOut(ply) end
 
-	self:GameDroppedOut(ply)
-
-	if NECROSIS.WaveActive then self:GameCheckLoss()
-	elseif count_ready() == 0 then
+	if NECROSIS.GameActive then self:GameCheckLoss()
+	elseif call_hook and count_ready() == 0 then
 		start_progression = nil
 
-		self:GameTimerStop(start_delay)
+		self:GameTimerStop()
 	end
 end
 
