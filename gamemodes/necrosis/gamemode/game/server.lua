@@ -122,6 +122,8 @@ end
 function GM:Think()
 	--run the timer think only if we have one
 	if NECROSIS.GameTimer then self:GameTimerThink() end
+
+	self:NavigationThink()
 end
 
 --commands

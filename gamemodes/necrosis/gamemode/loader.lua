@@ -148,7 +148,11 @@ local config = {
 			survivor = "shared",
 		},
 
-		server = true,
+		server = {true,
+			log = "server",
+			navigation = "server",
+		},
+
 		shared = true,
 
 		ui = {
@@ -234,7 +238,6 @@ do --do not touch
 	local function grab_extensions(directory)
 		local files, folders = file.Find(directory .. "*", "LUA")
 
-		--file.Exists is not reliable for directories on client
 		if files then
 			for index, folder_name in ipairs(folders) do
 				local directory = directory .. folder_name .. "/"
@@ -390,17 +393,7 @@ do --do not touch
 	--post
 	if load_extensions then
 		local loader = debug.getinfo(1, "S").short_src
-		--local loader_substring
-		local _start, finish
-
-		if GM then
-			_start, finish = string.find(loader, "/.-/gamemodes/")
-			--loader_substring = string.sub(loader, finish + 1)
-			--loader_substring =
-		else
-			_start, finish = string.find(loader, "/?lua/", 1, true)
-			--loader_substring = string.sub(loader, start + 4, finish)
-		end
+		local _start, finish = string.find(loader, GM and "/.-/gamemodes/" or "/?lua/")
 
 		local loader_path = string.sub(loader, finish + 1)
 		local loader_extensions_directory = string.GetPathFromFilename(loader_path) .. "extensions/"
@@ -452,7 +445,7 @@ do --do not touch
 				return next_structure, table.insert(config, next_structure), true
 			else index = #config end
 
-			return config[index], config, false
+			return config[index], index, false
 		end,
 
 		Before = function(path, dont_create_table)

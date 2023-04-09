@@ -123,6 +123,8 @@ function GM:PlayerInitialSpawn(ply)
 end
 
 function GM:PlayerSpawn(ply, _transition)
+	ply.NecrosisCurrentNavArea = nil
+	ply.NecrosisCurrentNavAreaIndex = nil
 	ply.NecrosisMaximumStamina = 4
 
 	player_manager.OnPlayerSpawn(ply, transiton)
@@ -137,6 +139,8 @@ function GM:PlayerSpawn(ply, _transition)
 end
 
 function GM:PlayersPlayingList(copy, forced)
+	--TODO: make this obsolete
+	--we should just have a table that we update everytime something happens
 	local tick = engine.TickCount()
 
 	if playing_players_updated ~= tick or forced then
