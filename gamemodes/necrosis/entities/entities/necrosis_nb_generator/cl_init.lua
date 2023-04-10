@@ -2,9 +2,11 @@ include("shared.lua")
 
 --entit functions
 function ENT:Draw()
-	render.SuppressEngineLighting(true)
-	self:DrawModel()
-	render.SuppressEngineLighting(false)
+	cam.IgnoreZ(true)
+		render.SuppressEngineLighting(true)
+			self:DrawModel()
+		render.SuppressEngineLighting(false)
+	cam.IgnoreZ(false)
 end
 
 function ENT:DrawTranslucent() end
