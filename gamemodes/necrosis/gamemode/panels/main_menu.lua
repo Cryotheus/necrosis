@@ -367,6 +367,14 @@ function PANEL:MusicVolume(volume)
 	if IsValid(stream) then stream:SetVolume(volume) end
 end
 
+function PANEL:OnKeyCodePressed(code)
+	if code == KEY_BACKQUOTE then gui.ActivateGameUI()
+	elseif code == KEY_ESCAPE then
+	else return end
+
+	self:Close()
+end
+
 function PANEL:OnRemove()
 	local stream = self.MusicStream
 
