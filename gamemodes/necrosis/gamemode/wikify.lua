@@ -43,4 +43,12 @@ function GM:Wikify()
 		SourcePattern = default_pattern,
 		SourceURL = default_source_url,
 	}))
+
+	PYRITION:WikifyCollectPanels{
+		Category = PYRITION_WIKIFY_PANELS,
+		Name = "panel_necrosis",
+		Owner = "Necrosis",
+		SourcePattern = default_pattern,
+		SourceURL = default_source_url,
+	}
 end
