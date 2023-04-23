@@ -1,10 +1,27 @@
 --locals
-local playing_players_updated = 0
-local playing_players = NECROSIS.PlayersPlaying or {}
+local downed_players = NECROSIS.PlayerListDowned or {}
+local not_playing_players = NECROSIS.PlayerListNotPlaying or {}
+local playing_players = NECROSIS.PlayerListPlaying or {}
+local spectating_players = NECROSIS.PlayerListSpectating or {}
+local targettable_players = NECROSIS.PlayerListTargettable or {}
 
 --globals
-NECROSIS.PlayersPlaying = playing_players
+NECROSIS.PlayerListDowned = downed_players
+NECROSIS.PlayerListNotPlaying = not_playing_players
+NECROSIS.PlayerListPlaying = playing_players
+NECROSIS.PlayerListSpectating = spectating_players
+NECROSIS.PlayerListTargettable = targettable_players
 NECROSIS.PlayerRagdolls = NECROSIS.PlayerRagdolls or {}
+
+--mirror
+GM.PlayerListDowned = downed_players
+GM.PlayerListNotPlaying = not_playing_players
+GM.PlayerListPlaying = playing_players
+GM.PlayerListSpectating = spectating_players
+GM.PlayerListTargettable = targettable_players
+
+--local functions
+local function empty_list(victim) for index = 1, #victim do victim[index] = nil end end --it's like table.Empty but for sequential tables only
 
 --gamemode functions
 function GM:DoPlayerDeath(ply, _attacker, _damage_info)
@@ -100,7 +117,7 @@ function GM:PlayerDeathThink(ply)
 	local record
 	local record_distance = math.huge
 
-	for index, ply in ipairs(self:PlayersPlayingList(false, true)) do
+	for index, ply in ipairs(self.PlayerListPlaying) do
 		local distance = ply:GetPos():Distance(ply_pos)
 
 		if distance < record_distance then
@@ -115,11 +132,11 @@ function GM:PlayerDeathThink(ply)
 	end
 end
 
-function GM:PlayerDisconnected(_ply) self:PlayersPlayingList(false, true) end
+function GM:PlayerDisconnected(_ply) self:PlayerUpdateLists() end
 
 function GM:PlayerInitialSpawn(ply)
 	self:PlayerSpawnAsSpectator(ply, false, TEAM_UNASSIGNED)
-	self:PlayersPlayingList(false, true)
+	self:PlayerUpdateLists()
 end
 
 function GM:PlayerSpawn(ply, _transition)
@@ -138,21 +155,21 @@ function GM:PlayerSpawn(ply, _transition)
 	ply:SetMoveType(ply:NecrosisPlaying() and MOVETYPE_WALK or MOVETYPE_NOCLIP)
 end
 
-function GM:PlayersPlayingList(copy, forced)
-	--TODO: make this obsolete
-	--we should just have a table that we update everytime something happens
-	local tick = engine.TickCount()
+function GM:PlayerUpdateLists()
+	empty_list(playing_players)
 
-	if playing_players_updated ~= tick or forced then
-		playing_players_updated = tick
+	for index, ply in pairs(player.GetAll()) do
+		if ply:NecrosisPlaying() then
+			table.insert(playing_players, ply)
 
-		for index in ipairs(playing_players) do playing_players[index] = nil end
-		for index, ply in pairs(player.GetAll()) do if ply:NecrosisPlaying() then table.insert(playing_players, ply) end end
+			if ply:NecrosisDowned() then table.insert(downed_players, ply)
+			else table.insert(targettable_players, ply) end
+		else
+			table.insert(not_playing_players, ply)
+			
+			if ply:NecrosisIsSpectator() then table.insert(spectating_players, ply) end
+		end
 	end
-
-	if copy then return table.Copy(playing_players) end
-
-	return playing_players
 end
 
 function GM:PlayerUse(ply, _entity) return ply:NecrosisPlaying() end

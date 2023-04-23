@@ -1,5 +1,6 @@
 --locals
 local area_list = PYRITION.NavigationAreaList
+local area_path_ranges = NECROSIS.NavigationAreaPathRanges or {}
 local area_paths = NECROSIS.NavigationAreaPaths or {}
 local debug_command_flags = bit.bor(FCVAR_CHEAT, FCVAR_UNREGISTERED)
 local paths = NECROSIS.NavigationPaths or {}
@@ -9,6 +10,7 @@ local debug_navarea_color = Color(255, 192, 0, 2)
 local debug_path_color = Color(255, 32, 32)
 
 --globals
+NECROSIS.NavigationAreaPathRanges = area_path_ranges
 NECROSIS.NavigationAreaPaths = area_paths
 NECROSIS.NavigationPaths = paths
 
@@ -41,39 +43,9 @@ function GM:NavigationLoad()
 	if not handle then return false end
 	if handle:ReadULong() ~= version or handle:ReadULong() ~= checksum or handle:ReadDouble() ~= navmesh_size then return false end
 
+	table.Empty(area_path_ranges)
 	table.Empty(area_paths)
 	table.Empty(paths)
-
-	--read the paths
-	for index = 1, handle:ReadULong() do
-		local path = {}
-		paths[index] = path
-
-		for index = 1, handle:ReadULong() do
-			local area_index = handle:ReadULong()
-			local area = area_list[area_index]
-			--local area_center = area:GetCenter()
-			local behavior = handle:ReadByte()
-
-			--TODO: write portal data
-			local portal_center = segment.m_portalCenter
-			local portal_enumeration = area:ComputeDirection(portal_center)
-			local portal_half_width = segment.m_portalHalfWidth
-			--local portal_line = area_direction_rights[portal_enumeration] * portal_half_width
-
-			path[index] = {
-				area_index,
-				behavior,
-
-				--test
-				portal_center,
-				portal_half_width,
-				portal_enumeration,
-				--portal_center + portal_line,
-				--portal_center - portal_line,
-			}
-		end
-	end
 
 	return true
 end
@@ -87,30 +59,10 @@ function GM:NavigationSave()
 	handle:WriteULong(version)
 	handle:WriteULong(checksum)
 	handle:WriteDouble(navmesh_size)
-
-	--write the paths
-	handle:WriteULong(#paths)
-
-	for _, path in ipairs(paths) do
-		handle:WriteULong(#path)
-
-		for _, sanitized_segment in ipairs(path) do
-			handle:WriteULong(sanitized_segment[1])
-			handle:WriteByte(sanitized_segment[2])
-		end
-	end
-
-	--write areas' path indices
-	handle:WriteULong(table.Count(area_paths))
-
-	for area_index, path_index in pairs(area_paths) do
-		handle:WriteULong(area_index)
-		handle:WriteULong(path_index)
-	end
 end
 
 function GM:NavigationThink()
-	for index, ply in ipairs(self:PlayersPlayingList()) do
+	for index, ply in ipairs(self.PlayerListPlaying) do
 		local new_area = navmesh.GetNearestNavArea(ply:GetPos())
 
 		if new_area then
@@ -145,18 +97,11 @@ function GM:NecrosisNavigationInitialize()
 	--TODO: load navigation file
 	if false then self:Log("navigation", "Navigation file is up to date.")
 	else
+		table.Empty(area_path_ranges)
+		table.Empty(area_paths)
+
 		self:Log("navigation", "Navigation file is out of date, generating a new one...")
-
-		local generator = ents.Create("necrosis_nb_generator")
-		local random_area = navmesh.GetAllNavAreas()[1]
-		self.NavigationGenerator = generator
-
-		generator:CallOnRemove("NecrosisNavigation", function() self.NavigationGenerator = nil end)
-		generator:SetPos(random_area:GetCenter())
-		generator:Spawn()
-
-		--do we actually need this?
-		--generator:Activate()
+		self:NavigationGeneratorStart()
 	end
 end
 

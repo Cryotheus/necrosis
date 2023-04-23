@@ -369,7 +369,7 @@ end
 
 function PANEL:OnKeyCodePressed(code)
 	if code == KEY_BACKQUOTE then gui.ActivateGameUI()
-	elseif code == KEY_ESCAPE then
+	elseif code == KEY_ESCAPE then --we're already opening the game ui, so don't open it again
 	else return end
 
 	self:Close()

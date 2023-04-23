@@ -10,4 +10,7 @@ ENT.Spawnable = true
 ENT.Type = "nextbot"
 
 --entity functions
-function ENT:SharedInitialize() end
+function ENT:SharedInitialize()
+	--the wiki is incorrect, this does everything
+	self:UseClientSideAnimation()
+end

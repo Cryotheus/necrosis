@@ -2,20 +2,24 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
+--accessor functions
+AccessorFunc(ENT, "Target", "Target")
+
 --locals
---local chase_gap = 36
-local fail_repath_delay = 2
-local repath_delay = 2
+local area_list = PYRITION.NavigationAreaList
+local area_paths = NECROSIS.NavigationAreaPaths
+local paths = NECROSIS.NavigationPaths
 
---enumerations
-local PATHING_FAILED = 1
-local PATHING_OK = 2
-local PATHING_STUCK = 3
+--local functions
+local function get_path(start_index, target_index)
+	local targets_pathable = area_paths[start_index]
 
---debug for now
-local path_meta = FindMetaTable("PathFollower")
+	if targets_pathable then
+		local path_index = targets_pathable[target_index]
 
-function path_meta:SmartChase(_bot, _target) end
+		if path_index then return paths[path_index] end
+	end
+end
 
 --entity functions
 function ENT:BehaveStart() self.BehaveThread = coroutine.create(function() self:RunBehaviour() end) end
@@ -45,79 +49,30 @@ function ENT:BodyUpdate()
 	self:FrameAdvance()
 end
 
-function ENT:Chase(entity)
-	--local chase_segment
-	--local chase_start
-	local chaser = Path("Chase")
-	local do_chase = false
-	local follower = Path("Follow")
-	local follower_segment_count
-	local follower_segments
-	local next_repath = 0
+function ENT:FindTarget()
+	if self.Target then return self.Target end
 
-	self.Chasing = true
+	local allow_different_areas = true
+	local current_area = self.CurrentNavArea
+	local current_area_index = self.CurrentNavAreaIndex
+	local distance_targets = {}
+	local record
+	local record_distance = math.huge
 
-	chaser:Invalidate()
-	follower:SetGoalTolerance(20)
-	follower:SetMinLookAheadDistance(300)
+	for index, ply in ipairs(NECROSIS.PlayerListTargettable) do
+		local target_area_index = ply.NecrosisCurrentNavAreaIndex
 
-	local function repath()
-		follower:Compute(self, entity:GetPos())
+		if current_area_index == target_area_index then
+			allow_different_areas = false
 
-		if not follower:IsValid() then return false end
+			table.insert(distance_targets, ply)
+		elseif allow_different_areas then
+			local path = get_path(current_area_index, target_area_index)
 
-		follower_segments = follower:GetAllSegments()
-		follower_segment_count = #follower_segments
-
-		print(follower_segment_count)
-
-		return true
-	end
-
-	local function wait_repath() while not repath() do coroutine.wait(fail_repath_delay) end end
-
-	if not repath() then return end
-
-	while true do
-		local entity_area = entity.NecrosisCurrentNavArea
-
-		if do_chase then
-			--Compute should be cheap when the bot is in the same area as the target
-			chaser:Compute(self, entity:GetPos())
-
-			if chaser:IsValid() and chaser:FirstSegment().area == entity_area then
-				--fixes pathing to area's portal instead of target
-				chaser:MoveCursorToEnd()
-
-				--Chase is the equivalent of the Update function
-				chaser:Chase(self, entity)
-				chaser:Draw()
-
-				coroutine.yield()
-			else wait_repath() end
-		else
-			print("follow")
-
-			local goal = follower:GetCurrentGoal()
-
-			if goal and goal.length == 0 and goal.area == entity_area then
-				do_chase = true
-
-				follower:Invalidate()
-			else
-				local cur_time = CurTime()
-
-				if cur_time > next_repath then
-					next_repath = cur_time + repath_delay
-
-					wait_repath()
-				end
-
-				follower:Update(self)
-				follower:Draw()
+			if path then
+				local current_area_center = current_area:GetCenter()
+				local path_distance = path.Distance + area_list[path[#path]]:Distance(current_area_center)
 			end
-
-			coroutine.yield()
 		end
 	end
 end
@@ -130,31 +85,6 @@ function ENT:Initialize()
 	self:SharedInitialize()
 end
 
-function ENT:MoveToPosition(position)
-	local path = Path("Follow")
-
-	path:SetGoalTolerance(20)
-	path:SetMinLookAheadDistance(300)
-	path:Compute(self, position)
-
-	if path:IsValid() then
-		while path:IsValid() do
-			path:Update(self)
-			path:Draw()
-
-			if self.loco:IsStuck() then
-				self:HandleStuck()
-
-				return PATHING_STUCK
-			end
-
-			coroutine.yield()
-		end
-	else return PATHING_FAILED end
-
-	return PATHING_OK
-end
-
 function ENT:HandleAnimEvent(_event, _event_time, _cycle, _class, _options) end
 function ENT:OnContact(_entity) end
 function ENT:OnEntitySight(_subject) end
@@ -164,35 +94,42 @@ function ENT:OnInjured(_damage_info) end
 function ENT:OnKilled(damage_info) self:BecomeRagdoll(damage_info) end
 function ENT:OnLandOnGround(_entity) end
 function ENT:OnLeaveGround(_entity) end
-function ENT:OnNavAreaChanged(_old, _new) end --THIS IS SO USEFUL!!! THANK YOU VALVE!!!
+
+function ENT:OnNavAreaChanged(_old, new)
+	self.CurrentNavArea = new
+	self.CurrentNavAreaIndex = area_list[new]
+end
+
 function ENT:OnOtherKilled(_victim, _info) end
 function ENT:OnStuck() end
 function ENT:OnTakeDamage(_damage_info) end
 function ENT:OnTraceAttack(_damage_info, _direction, _trace) end
 function ENT:OnUnStuck() end
 
+function ENT:AdvancePath()
+
+end
+
 function ENT:RunBehaviour()
 	self.loco:SetDesiredSpeed(200)
 	self:StartActivity(ACT_RUN_PISTOL)
 
 	while true do
-		print("create path")
+		if not self.CurrentNavArea then print("no nav area yet...")
+		else
+			local approach_position
+			local source_area = self.CurrentNavArea
+			local source_area_index = area_list[source_area]
+			local target = self:FindTarget()
+			local target_area = target.NecrosisCurrentNavArea
+			local target_area_index = target.NecrosisCurrentNavAreaIndex
 
-		local path = Path("Chase")
-		local target = player.GetAll()[1]
+			if source_area_index == target_area_index then approach_position = target:GetPos()
+			else
 
-		if target then
-			print("compute path")
-			path:SetGoalTolerance(20)
-			path:SetMinLookAheadDistance(300)
-			--path:Compute(self, Entity(1):GetPos())
-
-			while target:IsValid() do
-				path:Chase(self, target)
-				path:Draw()
-
-				coroutine.yield()
 			end
+
+			if approach_position then self.loco:Approach(approach_position, 1) end
 		end
 
 		coroutine.yield()
@@ -201,3 +138,11 @@ end
 
 function ENT:Think() end
 function ENT:Use(_activator, _caller, _type, _value) end
+
+--hooks
+hook.Add("PyritionPostNavigationSetup", "NecrosisEntityNBBase", function() area_list = PYRITION.NavigationAreaList end)
+
+hook.Add("NecrosisNavigationInitialize", "NecrosisEntityNBBase", function()
+	area_paths = NECROSIS.NavigationAreaPaths
+	paths = NECROSIS.NavigationPaths
+end)

@@ -91,6 +91,12 @@ local config = {
 				shared = true,
 			},
 		},
+
+		server = {true,
+			navigation = {
+				server = true,
+			},
+		}
 	},
 
 	{
@@ -150,7 +156,11 @@ local config = {
 
 		server = {true,
 			log = "server",
-			navigation = "server",
+
+			navigation = {
+				generator = "server",
+				path = "server",
+			},
 		},
 
 		shared = true,
