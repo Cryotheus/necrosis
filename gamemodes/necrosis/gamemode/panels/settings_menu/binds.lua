@@ -33,7 +33,6 @@ function PANEL:Init()
 				right_panel:SetWide(right_width - divide)
 
 				self.KickBinderPanel:DockMargin(0, 0, 0, margin)
-				self.MeleeBinderPanel:DockMargin(0, 0, 0, margin)
 				self.GrenadeBinderPanel:DockMargin(0, 0, 0, margin)
 				self.SpecialGrenadeBinderPanel:DockMargin(0, 0, 0, margin)
 
@@ -64,18 +63,6 @@ function PANEL:Init()
 				binder:SetNecrosisFont("Small")
 				binder:SetText("#necrosis.panels.settings_menu_binds.binder.kick")
 				self:RegisterBinder("kick", binder)
-			end
-
-			do --melee binder
-				local binder = vgui.Create("NecrosisBinderLabeled", right_panel)
-				sizer.MeleeBinderPanel = binder
-
-				binder:Dock(TOP)
-				binder:SetCommand("+necrosis_melee")
-				binder:SetHeight(120)
-				binder:SetNecrosisFont("Small")
-				binder:SetText("#necrosis.panels.settings_menu_binds.binder.melee")
-				self:RegisterBinder("melee", binder)
 			end
 
 			do --grenade binder

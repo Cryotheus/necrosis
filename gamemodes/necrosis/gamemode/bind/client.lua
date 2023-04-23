@@ -136,8 +136,6 @@ function GM:ShowTeam() end
 --commands
 concommand.Add("+necrosis_grenade", empty_function)
 concommand.Add("-necrosis_grenade", empty_function)
-concommand.Add("+necrosis_melee", empty_function)
-concommand.Add("-necrosis_melee", empty_function)
 concommand.Add("+necrosis_special_grenade", empty_function)
 concommand.Add("-necrosis_special_grenade", empty_function)
 concommand.Add("+necrosis_throw", empty_function)
